@@ -1,0 +1,21 @@
+{
+  "name": "entity-core",
+  "version": "1.0.0",
+  "description": "A backend framework to do the heavy lifting for frontend developers",
+  "main": "dist/index.js",
+  "repository": "https://github.com/medatech/entity-core.git",
+  "author": "martin@meda.io",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/ts-jest",
+      "**/ts-jest/**",
+      "**/@types",
+      "**/@types/**"
+    ]
+  }
+}
