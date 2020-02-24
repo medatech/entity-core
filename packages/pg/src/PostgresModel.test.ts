@@ -9,7 +9,11 @@ describe('PostgresDataSource', () => {
             database: 'sandbox'
         }
 
-        const dataSource = new PostgresDataSource({ ...config })
+        const dataSource = new PostgresDataSource({
+            poolConfig: {
+                ...config
+            }
+        })
         expect(dataSource.poolConfig).toMatchObject(config)
     })
 })

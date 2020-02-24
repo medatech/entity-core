@@ -1,5 +1,5 @@
 import { PoolClient } from "pg"
-import { Client, QueryResult } from "@entity-core/datasource"
+import { Client } from "@entity-core/datasource"
 
 class PostgresClient extends Client {
     poolClient: PoolClient
@@ -9,7 +9,7 @@ class PostgresClient extends Client {
         this.poolClient = poolClient
     }
 
-    query(query: string, variables?: Array<unknown>): Promise<QueryResult> {
+    query(query: string, variables?: Array<unknown>): Promise<unknown> {
         return this.poolClient.query(query, variables)
     }
 

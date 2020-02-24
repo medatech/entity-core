@@ -1,10 +1,10 @@
 {
-    "name": "@entity-core/context",
+    "name": "@entity-core/uuid",
     "version": "1.0.0",
-    "description": "A context class for handling entity-core database operations and request sessions",
+    "description": "Generate unique identifiers",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "repository": "https://github.com/medatech/entity-core/tree/master/packages/context",
+    "repository": "https://github.com/medatech/entity-core/tree/master/packages/uuid",
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {
@@ -14,6 +14,7 @@
         "@babel/core": "^7.8.4",
         "@babel/preset-env": "^7.8.4",
         "@babel/preset-typescript": "^7.8.3",
+        "@types/nanoid": "^2.1.0",
         "@types/node": "^13.7.4",
         "@typescript-eslint/eslint-plugin": "^2.20.0",
         "@typescript-eslint/parser": "^2.20.0",
@@ -21,6 +22,6 @@
         "typescript": "^3.8.2"
     },
     "dependencies": {
-        "@entity-core/uuid": "^1.0.0"
+        "nanoid": "^2.1.11"
     }
 }

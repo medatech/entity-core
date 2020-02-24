@@ -1,0 +1,1 @@
+export { default as createEntity } from './createEntity'

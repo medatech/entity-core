@@ -5,10 +5,20 @@ import PostgresClient from "./PostgresClient"
 class PostgresDataSource extends DataSource {
     poolConfig: PoolConfig
     pool: Pool
+    tablePrefix: string
 
-    constructor(poolConfig: PoolConfig) {
+    constructor({
+        poolConfig,
+        tablePrefix = ''
+    }:
+        {
+            poolConfig: PoolConfig;
+            tablePrefix?: string;
+        }
+    ) {
         super()
         this.poolConfig = poolConfig
+        this.tablePrefix = tablePrefix
     }
 
     async connect(): Promise<void> {
