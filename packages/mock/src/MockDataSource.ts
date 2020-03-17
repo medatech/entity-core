@@ -1,10 +1,10 @@
 import { DataSource } from "@entity-core/datasource"
-import MockClient from './MockClient'
+import { Client } from "@entity-core/datasource"
 
 class MockDataSource extends DataSource {
-    client: MockClient
+    client: Client
 
-    constructor(client: MockClient) {
+    constructor(client: Client) {
         super()
         this.client = client
     }
@@ -13,7 +13,7 @@ class MockDataSource extends DataSource {
 
     async disconnect(): Promise<void> { return }
 
-    async getClient(): Promise<MockClient> {
+    async getClient(): Promise<Client> {
         return this.client
     }
 }

@@ -19,8 +19,7 @@
     "include": [
         "src/**/*",
         "test/**/*",
-        "node_modules/@types",
-        "../pg/src/Lib"
+        "node_modules/@types"
     ],
     "exclude": [
         "node_modules"

@@ -1,8 +1,10 @@
-import { createEntity } from "./"
+import { createEntity } from "."
 
 import { Context } from '@entity-core/context'
+import { nanoid } from '@entity-core/uuid'
 import { MockClient, MockDataSource } from '@entity-core/mock'
 import { EntityQuery } from "../Types"
+import { client, dataSource } from '../Fixtures/TestClient'
 
 describe("createEntity", () => {
     it("should allow me to create an entity", async () => {
@@ -16,8 +18,10 @@ describe("createEntity", () => {
         }
 
         // Mock the uuid assigned to the entity
+        let uuid = null
         function mockUuid(): string {
-            return 'mock-uuid'
+            uuid = nanoid()
+            return uuid;
         }
 
         // This is when the db queries are called, so mock the response from the db
@@ -34,10 +38,10 @@ describe("createEntity", () => {
         }
 
         // Create our mock client, context and data source
-        const client = new MockClient()
-        client.onQuery(mockQueries)
+        // const client = new MockClient()
+        client.on('query', mockQueries)
         const context = new Context({
-            dataSource: new MockDataSource(client),
+            dataSource,
             uuidGenerator: mockUuid
         })
 
@@ -47,7 +51,7 @@ describe("createEntity", () => {
         expect(entity).toMatchObject({
             _id: `100`,
             type: entitySpec.type,
-            uuid: 'mock-uuid',
+            uuid: uuid,
             title: entitySpec.title,
             props: entitySpec.props
         })
@@ -79,7 +83,7 @@ describe("createEntity", () => {
 
         // Create our mock client, context and data source
         const client = new MockClient()
-        client.onQuery(mockQueries)
+        client.on('query', mockQueries)
         const context = new Context({
             dataSource: new MockDataSource(client),
             uuidGenerator: mockUuid
@@ -117,7 +121,7 @@ describe("createEntity", () => {
 
         // Create our mock client, context and data source
         const client = new MockClient()
-        client.onQuery(mockQueries)
+        client.on('query', mockQueries)
         const context = new Context({
             dataSource: new MockDataSource(client),
             uuidGenerator: mockUuid

@@ -20,10 +20,10 @@
     },
     "include": [
         "src/**/*",
-        "test/**/*",
         "node_modules/@types"
     ],
     "exclude": [
+        "src/**/*.test.ts",
         "node_modules"
     ]
 }

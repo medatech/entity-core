@@ -16,6 +16,10 @@ class PostgresClient extends Client {
     async release(): Promise<void> {
         this.poolClient.release()
     }
+
+    async on(event: string, callback: (query: string, variables: Array<unknown>) => unknown): Promise<void> {
+        return
+    }
 }
 
 export default PostgresClient
