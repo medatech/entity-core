@@ -1,12 +1,15 @@
 import { PoolClient } from "pg"
 import { Client } from "@entity-core/datasource"
+import { DataSource } from "@entity-core/datasource"
 
 class PostgresClient extends Client {
+    dataSource: DataSource
     poolClient: PoolClient
 
-    constructor(poolClient: PoolClient) {
+    constructor(poolClient: PoolClient, dataSource: DataSource) {
         super()
         this.poolClient = poolClient
+        this.dataSource = dataSource
     }
 
     query(query: string, variables?: Array<unknown>): Promise<unknown> {
@@ -14,6 +17,7 @@ class PostgresClient extends Client {
     }
 
     async release(): Promise<void> {
+        this.dataSource.deregisterClient(this)
         this.poolClient.release()
     }
 
