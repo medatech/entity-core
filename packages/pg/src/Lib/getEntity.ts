@@ -4,23 +4,26 @@ import { EntityType } from "@entity-core/model"
 import { EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function createEntity({ context, entity }: { context: Context; entity: EntityType }): Promise<EntityType> {
+async function getEntity({ context, id, type }: { context: Context; id: string; type: string }): Promise<EntityType | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + 'entity';
 
     const tenantID = context.getTenantID()
-    const uuid = entity.uuid || context.uuid()
 
     const query = sql`
-        INSERT INTO "`.append(table).append(sql`"
-        (tenant_id, entity_type, uuid, props, parent, parent_type, previous)
-        VALUES
-        (${tenantID}, ${entity.type}, ${uuid}, ${entity.props || null}, null, null, null)
-        RETURNING *
+        SELECT * FROM "`.append(table).append(sql`"
+        WHERE tenant_id = ${tenantID}
+          AND entity_type = ${type}
+          AND id = ${id}
+        LIMIT 1
     `)
 
-    const { rows: [row] } = await client.query(query) as EntityQuery
+    const { rows: [row = null] } = await client.query(query) as EntityQuery
+
+    if (row === null) {
+        return null
+    }
 
     return {
         id: row.id.toString(),
@@ -30,4 +33,4 @@ async function createEntity({ context, entity }: { context: Context; entity: Ent
     }
 }
 
-export default createEntity
+export default getEntity

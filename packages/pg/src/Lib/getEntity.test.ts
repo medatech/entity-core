@@ -1,15 +1,15 @@
-import { createEntity } from "."
+import { createEntity, getEntity } from "."
 
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
 
-describe("createEntity", () => {
+describe("getEntity", () => {
 
     beforeEach(beforeEachTest)
 
     afterEach(afterAllTests)
 
-    it("should allow me to create an entity", async () => {
+    it("should allow me to get an entity", async () => {
         const entitySpec = {
             type: `Document`,
             props: {
@@ -25,7 +25,9 @@ describe("createEntity", () => {
         // Now create the entity
         const entity = await createEntity({ context, entity: entitySpec })
 
-        expect(entity).toMatchObject({
+        const verifyEntity = await getEntity({ context, id: entity.id, type: entity.type })
+
+        expect(verifyEntity).toMatchObject({
             id: entity.id,
             type: entitySpec.type,
             uuid: entity.uuid,
@@ -35,25 +37,14 @@ describe("createEntity", () => {
         await context.end();
     })
 
-    it("should allow me to create an entity without a title or props", async () => {
+    it("should allow me to get a null entity", async () => {
         const context = new Context({
             dataSource
         })
 
-        // Now create the entity
-        const entity = await createEntity({
-            context, entity: {
-                type: 'Thing'
-            }
-        })
+        const verifyEntity = await getEntity({ context, id: "123", type: "Document" })
+        expect(verifyEntity).toBe(null)
 
-        expect(entity).toMatchObject({
-            id: entity.id,
-            type: 'Thing',
-            uuid: entity.uuid,
-            props: null
-        })
-
-        await context.end()
+        await context.end();
     })
 })

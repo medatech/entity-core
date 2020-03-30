@@ -20,7 +20,9 @@
     },
     "include": [
         "src/**/*",
-        "node_modules/@types"
+        "node_modules/@types",
+        "test/createEntity.test.ts",
+        "test/Fixtures"
     ],
     "exclude": [
         "src/**/*.test.ts",

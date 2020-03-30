@@ -8,9 +8,8 @@
     "license": "MIT",
     "scripts": {
         "build": "tsc",
-        "test": "TEST_ENV=unit jest src",
-        "test:integration": "TEST_ENV=integration jest --runInBand src",
-        "coverage": "jest --coverage src"
+        "test": "jest --runInBand src",
+        "coverage": "jest --runInBand --coverage src"
     },
     "jest": {
         "transform": {

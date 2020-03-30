@@ -4,7 +4,7 @@ import * as Lib from './Lib'
 
 class PostgresModel extends Model {
     createEntity(context: Context, entity: EntityType): Promise<EntityType> {
-        return Lib.createEntity(context, entity)
+        return Lib.createEntity({ context, entity })
     }
 }
 
