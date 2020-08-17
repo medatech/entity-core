@@ -13,7 +13,6 @@
         "build:context": "yarn workspace @entity-core/context run build",
         "build:datasource": "yarn workspace @entity-core/datasource run build",
         "build:model": "yarn workspace @entity-core/model run build",
-        "build:mock": "yarn workspace @entity-core/mock run build",
         "build:pg": "yarn workspace @entity-core/pg run build"
     },
     "workspaces": {
