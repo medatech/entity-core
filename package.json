@@ -4,7 +4,7 @@
     "description": "A backend framework to do the heavy lifting for frontend developers",
     "main": "dist/index.js",
     "repository": "https://github.com/medatech/entity-core.git",
-    "author": "martin@meda.io",
+    "author": "hello@meda.io",
     "license": "MIT",
     "private": true,
     "scripts": {
