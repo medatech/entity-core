@@ -19,7 +19,7 @@ async function getParent({ context, id, type }: { context: Context; id: string; 
        AND c.entity_type = ${type}
        AND c.id = ${id}
      LIMIT 1
-    `))) as { rows: Array<{ id: string; entity_type: string; uuid: string; props: Reacord<string, unkown> }> }
+    `))) as { rows: Array<{ id: string; entity_type: string; uuid: string; props: Record<string, unknown> }> }
 
     if (rows.length > 0) {
         return {
