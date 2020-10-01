@@ -1,5 +1,5 @@
-import EntityRecord from './EntityRecord'
+import EntityRecord from "./EntityRecord"
 
 export default interface EntityQuery {
-    rows: Array<EntityRecord>;
+    rows: Array<EntityRecord>
 }

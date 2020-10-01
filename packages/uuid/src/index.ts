@@ -1,1 +1,1 @@
-export { default as nanoid } from './nanoid'
+export { default as nanoid } from "./nanoid"

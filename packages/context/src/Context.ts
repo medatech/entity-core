@@ -1,5 +1,5 @@
-import { DataSource, Client } from '@entity-core/datasource'
-import { nanoid } from '@entity-core/uuid'
+import { DataSource, Client } from "@entity-core/datasource"
+import { nanoid } from "@entity-core/uuid"
 
 class Context {
     dataSource: DataSource
@@ -10,11 +10,11 @@ class Context {
     constructor({
         dataSource,
         tenantID = 1,
-        uuidGenerator = nanoid
+        uuidGenerator = nanoid,
     }: {
-        dataSource: DataSource;
-        tenantID?: number;
-        uuidGenerator?: () => string;
+        dataSource: DataSource
+        tenantID?: number
+        uuidGenerator?: () => string
     }) {
         this.dbClient = null
         this.dataSource = dataSource
@@ -36,7 +36,7 @@ class Context {
 
     async getDB(): Promise<Client> {
         if (this.dbClient === null) {
-            this.dbClient = await this.dataSource.getClient();
+            this.dbClient = await this.dataSource.getClient()
         }
         return this.dbClient
     }

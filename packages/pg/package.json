@@ -9,7 +9,9 @@
     "scripts": {
         "build": "tsc",
         "test": "jest --runInBand src",
-        "coverage": "jest --runInBand --coverage src"
+        "coverage": "jest --runInBand --coverage src",
+        "lint": "eslint ./src/**/*.ts",
+        "lint:autofix": "eslint --fix ./src/**/*.ts"
     },
     "jest": {
         "transform": {

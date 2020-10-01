@@ -12,16 +12,16 @@ async function getChildren({
     fromID = null,
     limit = 10,
 }: {
-    context: Context;
-    parentID: string;
-    parentType: string;
-    childType: string;
-    fromID?: string;
-    limit?: number;
+    context: Context
+    parentID: string
+    parentType: string
+    childType: string
+    fromID?: string
+    limit?: number
 }): Promise<Array<EntityType>> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
-    const table = dataSource.tablePrefix + 'entity';
+    const table = dataSource.tablePrefix + `entity`
     const tenantID = context.getTenantID()
 
     const query = sql`
@@ -39,7 +39,8 @@ async function getChildren({
     } else {
         query.append(sql`AND previous = ${fromID}`)
     }
-    query.append(sql`
+    query.append(
+        sql`
         UNION
             SELECT
                 e.*, ent.index + 1 as index
@@ -57,15 +58,16 @@ async function getChildren({
     SELECT * FROM ent 
     ORDER BY ent.index
     LIMIT ${limit}
-    `))
+    `)
+    )
 
-    const { rows } = await client.query(query) as EntityQuery
+    const { rows } = (await client.query(query)) as EntityQuery
 
-    return rows.map(row => ({
+    return rows.map((row) => ({
         id: row.id.toString(),
         type: row.entity_type,
         uuid: row.uuid,
-        props: row.props
+        props: row.props,
     }))
 }
 

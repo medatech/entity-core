@@ -3,23 +3,22 @@ import { createEntity } from "."
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
 
-describe("createEntity", () => {
-
+describe(`createEntity`, () => {
     beforeEach(beforeEachTest)
 
     afterEach(afterAllTests)
 
-    it("should allow me to create an entity", async () => {
+    it(`should allow me to create an entity`, async () => {
         const entitySpec = {
             type: `Document`,
             props: {
-                title: 'My Document',
-                shared: true
-            }
+                title: `My Document`,
+                shared: true,
+            },
         }
 
         const context = new Context({
-            dataSource
+            dataSource,
         })
 
         // Now create the entity
@@ -29,29 +28,30 @@ describe("createEntity", () => {
             id: entity.id,
             type: entitySpec.type,
             uuid: entity.uuid,
-            props: entitySpec.props
+            props: entitySpec.props,
         })
 
-        await context.end();
+        await context.end()
     })
 
-    it("should allow me to create an entity without a title or props", async () => {
+    it(`should allow me to create an entity without a title or props`, async () => {
         const context = new Context({
-            dataSource
+            dataSource,
         })
 
         // Now create the entity
         const entity = await createEntity({
-            context, entity: {
-                type: 'Thing'
-            }
+            context,
+            entity: {
+                type: `Thing`,
+            },
         })
 
         expect(entity).toMatchObject({
             id: entity.id,
-            type: 'Thing',
+            type: `Thing`,
             uuid: entity.uuid,
-            props: null
+            props: null,
         })
 
         await context.end()

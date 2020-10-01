@@ -1,2 +1,2 @@
-const { nanoid } = require('nanoid')
+import { nanoid } from "nanoid"
 export default nanoid

@@ -4,10 +4,18 @@ import { EntityType } from "@entity-core/model"
 import { EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function getEntity({ context, id, type }: { context: Context; id: string; type: string }): Promise<EntityType | null> {
+async function getEntity({
+    context,
+    id,
+    type,
+}: {
+    context: Context
+    id: string
+    type: string
+}): Promise<EntityType | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
-    const table = dataSource.tablePrefix + 'entity';
+    const table = dataSource.tablePrefix + `entity`
 
     const tenantID = context.getTenantID()
 
@@ -19,7 +27,9 @@ async function getEntity({ context, id, type }: { context: Context; id: string; 
         LIMIT 1
     `)
 
-    const { rows: [row = null] } = await client.query(query) as EntityQuery
+    const {
+        rows: [row = null],
+    } = (await client.query(query)) as EntityQuery
 
     if (row === null) {
         return null
@@ -29,7 +39,7 @@ async function getEntity({ context, id, type }: { context: Context; id: string; 
         id: row.id.toString(),
         type: row.entity_type,
         uuid: row.uuid,
-        props: row.props
+        props: row.props,
     }
 }
 

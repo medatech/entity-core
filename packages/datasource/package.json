@@ -8,7 +8,9 @@
   "author": "Martin Adams",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint ./src/**/*.ts",
+    "lint:autofix": "eslint --fix ./src/**/*.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",

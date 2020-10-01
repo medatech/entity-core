@@ -8,10 +8,18 @@ import getPreviousSiblingID from "./getPreviousSiblingID"
 /**
  * Remove this entity from being a child to the parent
  */
-async function removeChildEntity({ context, id, type }: { context: Context; id: string; type: string }): Promise<void> {
+async function removeChildEntity({
+    context,
+    id,
+    type,
+}: {
+    context: Context
+    id: string
+    type: string
+}): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
-    const table = dataSource.tablePrefix + 'entity';
+    const table = dataSource.tablePrefix + `entity`
     const tenantID = context.getTenantID()
 
     const nextSiblingID = await getNextSiblingID({
@@ -30,23 +38,27 @@ async function removeChildEntity({ context, id, type }: { context: Context; id: 
 
     if (nextSiblingID !== null) {
         // There is a next sibling, so update it to be the previous sibling
-        await client.query(sql`
+        await client.query(
+            sql`
             UPDATE "`.append(table).append(sql`"
                SET previous = ${previousSiblingID}
              WHERE tenant_id = ${tenantID}
                AND entity_type = ${type}
                AND id = ${nextSiblingID}
-        `))
+        `)
+        )
     } else {
         // There is no next sibling, so update the previous to be the last child if it exists
         if (previousSiblingID !== null) {
-            await client.query(sql`
+            await client.query(
+                sql`
                 UPDATE "`.append(table).append(sql`"
                    SET is_last_child = true
                  WHERE tenant_id = ${tenantID}
                    AND entity_type = ${type}
                    AND id = ${previousSiblingID}
-            `))
+            `)
+            )
         }
     }
 

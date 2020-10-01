@@ -3,10 +3,16 @@ import { Context } from "@entity-core/context"
 import { EntityType } from "@entity-core/model"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function updateEntity({ context, entity }: { context: Context; entity: EntityType }): Promise<void> {
+async function updateEntity({
+    context,
+    entity,
+}: {
+    context: Context
+    entity: EntityType
+}): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
-    const table = dataSource.tablePrefix + 'entity';
+    const table = dataSource.tablePrefix + `entity`
 
     const tenantID = context.getTenantID()
 
