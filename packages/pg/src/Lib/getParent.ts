@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "@entity-core/model"
+import { EntityType } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function getParent({
@@ -8,7 +8,7 @@ async function getParent({
     id,
     type,
 }: {
-    context: Context
+    context: Context<any>
     id: string
     type: string
 }): Promise<EntityType | null> {

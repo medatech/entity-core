@@ -8,11 +8,10 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build": "yarn build:uuid && yarn build:context && yarn build:datasource && yarn build:model && yarn build:mock && yarn build:pg",
+        "build": "yarn build:uuid && yarn build:context && yarn build:datasource && yarn build:pg",
         "build:uuid": "yarn workspace @entity-core/uuid run build",
         "build:context": "yarn workspace @entity-core/context run build",
         "build:datasource": "yarn workspace @entity-core/datasource run build",
-        "build:model": "yarn workspace @entity-core/model run build",
         "build:pg": "yarn workspace @entity-core/pg run build"
     },
     "workspaces": {

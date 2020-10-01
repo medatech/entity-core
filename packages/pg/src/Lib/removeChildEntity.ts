@@ -13,7 +13,7 @@ async function removeChildEntity({
     id,
     type,
 }: {
-    context: Context
+    context: Context<any>
     id: string
     type: string
 }): Promise<void> {

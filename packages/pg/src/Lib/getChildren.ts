@@ -1,7 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "@entity-core/model"
-import { EntityQuery } from "../Types"
+import { EntityType, EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function getChildren({
@@ -12,7 +11,7 @@ async function getChildren({
     fromID = null,
     limit = 10,
 }: {
-    context: Context
+    context: Context<any>
     parentID: string
     parentType: string
     childType: string

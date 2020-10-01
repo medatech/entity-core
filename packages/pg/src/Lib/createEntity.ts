@@ -1,14 +1,13 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "@entity-core/model"
-import { EntityQuery } from "../Types"
+import { EntityType, EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function createEntity({
     context,
     entity,
 }: {
-    context: Context
+    context: Context<any>
     entity: EntityType
 }): Promise<EntityType> {
     const dataSource = context.dataSource as PostgresDataSource

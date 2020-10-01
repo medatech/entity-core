@@ -17,8 +17,9 @@ describe(`createEntity`, () => {
             },
         }
 
-        const context = new Context({
+        const context = new Context<string>({
             dataSource,
+            model: `hi`,
         })
 
         // Now create the entity

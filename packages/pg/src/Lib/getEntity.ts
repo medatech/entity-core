@@ -1,7 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "@entity-core/model"
-import { EntityQuery } from "../Types"
+import { EntityType, EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function getEntity({
@@ -9,7 +8,7 @@ async function getEntity({
     id,
     type,
 }: {
-    context: Context
+    context: Context<any>
     id: string
     type: string
 }): Promise<EntityType | null> {

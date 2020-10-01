@@ -13,7 +13,7 @@ async function unrelateEntity({
     targetEntityID,
     targetEntityType,
 }: {
-    context: Context
+    context: Context<any>
     relationship: string
     sourceEntityID: string
     sourceEntityType: string

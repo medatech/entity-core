@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "@entity-core/model"
+import { EntityType } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function getRelationshipPreviousSibling({
@@ -12,7 +12,7 @@ async function getRelationshipPreviousSibling({
     entityType,
     _lock = false,
 }: {
-    context: Context
+    context: Context<any>
     relationship: string
     fromID: string
     fromType: string
