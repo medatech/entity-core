@@ -14,7 +14,7 @@ async function _deleteEntity({
     type,
     isChild,
 }: {
-    context: Context<any>
+    context: Context
     id: string
     type: string
     isChild: boolean
@@ -129,7 +129,7 @@ function deleteEntity({
     id,
     type,
 }: {
-    context: Context<any>
+    context: Context
     id: string
     type: string
 }): Promise<void> {

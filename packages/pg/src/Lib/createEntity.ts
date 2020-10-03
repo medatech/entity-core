@@ -7,7 +7,7 @@ async function createEntity({
     context,
     entity,
 }: {
-    context: Context<any>
+    context: Context
     entity: EntityType
 }): Promise<EntityType> {
     const dataSource = context.dataSource as PostgresDataSource

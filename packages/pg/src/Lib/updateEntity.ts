@@ -7,7 +7,7 @@ async function updateEntity({
     context,
     entity,
 }: {
-    context: Context<any>
+    context: Context
     entity: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource

@@ -12,7 +12,7 @@ async function getRelationshipPreviousSibling({
     entityType,
     _lock = false,
 }: {
-    context: Context<any>
+    context: Context
     relationship: string
     fromID: string
     fromType: string

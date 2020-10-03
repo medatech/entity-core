@@ -11,7 +11,7 @@ async function getChildren({
     fromID = null,
     limit = 10,
 }: {
-    context: Context<any>
+    context: Context
     parentID: string
     parentType: string
     childType: string

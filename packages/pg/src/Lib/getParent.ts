@@ -8,7 +8,7 @@ async function getParent({
     id,
     type,
 }: {
-    context: Context<any>
+    context: Context
     id: string
     type: string
 }): Promise<EntityType | null> {

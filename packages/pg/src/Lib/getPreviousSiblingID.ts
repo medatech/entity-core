@@ -8,7 +8,7 @@ async function getPreviousSiblingID({
     type,
     _lock = false,
 }: {
-    context: Context<any>
+    context: Context
     id: string
     type: string
     _lock: boolean

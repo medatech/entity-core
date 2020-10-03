@@ -3,15 +3,15 @@ import { Context } from "@entity-core/context"
 import { EntityType, EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function findEntity({
+async function findEntity<T>({
     context,
     props,
     type,
 }: {
-    context: Context<any>
+    context: Context
     props: Record<string, string | number | null | boolean>
     type: string
-}): Promise<EntityType | null> {
+}): Promise<T | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -47,12 +47,12 @@ async function findEntity({
         return null
     }
 
-    return {
+    return (<unknown>{
         id: row.id.toString(),
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
-    }
+    }) as T
 }
 
 export default findEntity
