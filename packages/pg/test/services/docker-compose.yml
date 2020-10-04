@@ -1,11 +1,12 @@
 version: "3.6"
 services:
   entity-core-db:
-    image: "postgres"
+    build: .
     container_name: "entity-core-db"
     environment:
       - POSTGRES_USER=entitycore
       - POSTGRES_PASSWORD=entitycore
+      - DB_NAME=entitycore
     networks:
       - entity-core
     ports:
