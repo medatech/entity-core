@@ -38,8 +38,9 @@ module.exports = {
         ],
         "no-unused-vars": 0,
         "no-invalid-this": 0,
+        "prefer-const": 0,
         "@typescript-eslint/explicit-module-boundary-types": 0,
         "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/ban-ts-comment": 0,
+        "@typescript-eslint/ban-ts-comment": 0
     },
 }
