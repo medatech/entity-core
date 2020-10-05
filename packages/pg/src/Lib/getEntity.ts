@@ -7,10 +7,12 @@ async function getEntity({
     context,
     id,
     type,
+    _lock = false,
 }: {
     context: Context
     id: string
     type: string
+    _lock?: boolean
 }): Promise<EntityType | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
@@ -25,6 +27,10 @@ async function getEntity({
           AND id = ${id}
         LIMIT 1
     `)
+
+    if (_lock) {
+        query.append(`FOR UPDATE`)
+    }
 
     const {
         rows: [row = null],
