@@ -2,6 +2,20 @@ import { createEntity, getEntity } from "."
 
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
+import { Entity } from "../Types"
+
+interface Document extends Entity {
+    type: "Document"
+    props: {
+        title: string
+        shared: boolean
+    }
+}
+
+interface DocumentEntity extends Document {
+    id: number
+    uuid: string
+}
 
 describe(`getEntity`, () => {
     beforeEach(beforeEachTest)
@@ -9,7 +23,7 @@ describe(`getEntity`, () => {
     afterEach(afterAllTests)
 
     it(`should allow me to get an entity`, async () => {
-        const entitySpec = {
+        const entitySpec: Document = {
             type: `Document`,
             props: {
                 title: `My Document`,
@@ -22,18 +36,21 @@ describe(`getEntity`, () => {
         })
 
         // Now create the entity
-        const entity = await createEntity({ context, entity: entitySpec })
+        const doc = await createEntity<DocumentEntity>({
+            context,
+            entity: entitySpec,
+        })
 
-        const verifyEntity = await getEntity({
+        const verifyDoc = await getEntity<DocumentEntity>({
             context,
             id: entity.id,
             type: entity.type,
         })
 
-        expect(verifyEntity).toMatchObject({
-            id: entity.id,
+        expect(verifyDoc).toMatchObject({
+            id: doc.id,
             type: entitySpec.type,
-            uuid: entity.uuid,
+            uuid: doc.uuid,
             props: entitySpec.props,
         })
 

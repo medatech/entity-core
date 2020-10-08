@@ -1,15 +1,15 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { Entity, EntityRecord } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function createEntity({
+async function createEntity<E extends Entity>({
     context,
     entity,
 }: {
     context: Context
-    entity: EntityType
-}): Promise<EntityType> {
+    entity: Entity
+}): Promise<E> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -27,16 +27,22 @@ async function createEntity({
         RETURNING *
     `)
 
-    const {
-        rows: [row],
-    } = (await client.query(query)) as EntityQuery
-
-    return {
-        id: row.id.toString(),
-        type: row.entity_type,
-        uuid: row.uuid,
-        props: row.props,
+    const result = await client.query<EntityRecord>(query)
+    if (result.rows.length !== 1) {
+        throw new Error(
+            `Unable to create entity, expected 1 result but received ${result.rows.length}`
+        )
     }
+    const record = result.rows[0]
+
+    const outputEntity: E = {
+        id: record.id.toString(),
+        type: record.entity_type,
+        uuid: record.uuid,
+        props: record.props,
+    }
+
+    return outputEntity
 }
 
 export default createEntity

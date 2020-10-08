@@ -1,9 +1,9 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { EntityQuery } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function getEntity({
+async function getEntity<O>({
     context,
     id,
     type,
@@ -13,7 +13,7 @@ async function getEntity({
     id: string
     type: string
     _lock?: boolean
-}): Promise<EntityType | null> {
+}): Promise<O | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -40,12 +40,14 @@ async function getEntity({
         return null
     }
 
-    return {
+    const entity = {
         id: row.id.toString(),
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
     }
+
+    return (<unknown>entity) as O
 }
 
 export default getEntity

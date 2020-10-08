@@ -1,4 +1,4 @@
-import { PoolClient } from "pg"
+import { PoolClient, QueryResult } from "pg"
 import { Client } from "@entity-core/datasource"
 import { DataSource } from "@entity-core/datasource"
 import { SQLStatement } from "sql-template-strings"
@@ -13,11 +13,16 @@ class PostgresClient extends Client {
         this.dataSource = dataSource
     }
 
-    query(query: string | SQLStatement, variables?: Array<unknown>): Promise<unknown> {
+    query<R>(
+        query: string | SQLStatement,
+        variables?: Array<unknown>
+    ): Promise<QueryResult<R>> {
         if (this.poolClient === null) {
-            throw new Error("Unable to perform query as the client has already been released")
+            throw new Error(
+                `Unable to perform query as the client has already been released`
+            )
         }
-        return this.poolClient.query(query, variables)
+        return this.poolClient.query<R>(query, variables)
     }
 
     async release(): Promise<void> {
@@ -28,7 +33,10 @@ class PostgresClient extends Client {
         }
     }
 
-    async on(event: string, callback: (query: string, variables: Array<unknown>) => unknown): Promise<void> {
+    async on(
+        event: string,
+        callback: (query: string, variables: Array<unknown>) => unknown
+    ): Promise<void> {
         return
     }
 }
