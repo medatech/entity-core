@@ -1,7 +1,7 @@
 import { createEntity, getEntity } from "."
 
 import { Context } from "@entity-core/context"
-import { beforeEachTest, afterAllTests, dataSource } from "../fixtures_temp"
+import { beforeEachTest, afterAllTests, dataSource } from "../fixtures"
 import { Entity } from "../interfaces"
 
 interface Document extends Entity {
@@ -10,11 +10,6 @@ interface Document extends Entity {
         title: string
         shared: boolean
     }
-}
-
-interface DocumentEntity extends Document {
-    id: number
-    uuid: string
 }
 
 describe(`getEntity`, () => {
@@ -36,21 +31,21 @@ describe(`getEntity`, () => {
         })
 
         // Now create the entity
-        const doc = await createEntity<DocumentEntity>({
+        const entity = await createEntity<Document>({
             context,
             entity: entitySpec,
         })
 
-        const verifyDoc = await getEntity<DocumentEntity>({
+        const verifyDoc = await getEntity<Document>({
             context,
             id: entity.id,
             type: entity.type,
         })
 
         expect(verifyDoc).toMatchObject({
-            id: doc.id,
+            id: entity.id,
             type: entitySpec.type,
-            uuid: doc.uuid,
+            uuid: entity.uuid,
             props: entitySpec.props,
         })
 
@@ -62,9 +57,9 @@ describe(`getEntity`, () => {
             dataSource,
         })
 
-        const verifyEntity = await getEntity({
+        const verifyEntity = await getEntity<Document>({
             context,
-            id: `123`,
+            id: 123,
             type: `Document`,
         })
         expect(verifyEntity).toBe(null)

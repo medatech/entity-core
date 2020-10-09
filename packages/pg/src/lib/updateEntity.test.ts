@@ -2,6 +2,15 @@ import { createEntity, updateEntity, getEntity } from "."
 
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
+import { Entity } from "../interfaces"
+
+interface Document extends Entity {
+    type: "Document"
+    props: {
+        title: string
+        shared: boolean
+    }
+}
 
 describe(`createEntity`, () => {
     beforeEach(beforeEachTest)
@@ -9,7 +18,7 @@ describe(`createEntity`, () => {
     afterEach(afterAllTests)
 
     it(`should allow me to update an entity with new props`, async () => {
-        const entitySpec = {
+        const entitySpec: Document = {
             type: `Document`,
             props: {
                 title: `My Document`,
@@ -22,7 +31,7 @@ describe(`createEntity`, () => {
         })
 
         // First create the entity
-        const entity = await createEntity({
+        const entity = await createEntity<Document>({
             context,
             entity: {
                 type: `Document`,

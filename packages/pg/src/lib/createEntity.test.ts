@@ -2,6 +2,19 @@ import { createEntity } from "."
 
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
+import { Entity } from "../interfaces"
+
+interface Document extends Entity {
+    type: "Document"
+    props: {
+        title: string
+        shared: boolean
+    }
+}
+
+interface Thing extends Entity {
+    type: "Thing"
+}
 
 describe(`createEntity`, () => {
     beforeEach(beforeEachTest)
@@ -9,7 +22,7 @@ describe(`createEntity`, () => {
     afterEach(afterAllTests)
 
     it(`should allow me to create an entity`, async () => {
-        const entitySpec = {
+        const entitySpec: Document = {
             type: `Document`,
             props: {
                 title: `My Document`,
@@ -22,12 +35,15 @@ describe(`createEntity`, () => {
         })
 
         // Now create the entity
-        const entity = await createEntity({ context, entity: entitySpec })
+        const doc = await createEntity<Document>({
+            context,
+            entity: entitySpec,
+        })
 
-        expect(entity).toMatchObject({
-            id: entity.id,
+        expect(doc).toMatchObject({
+            id: doc.id,
             type: entitySpec.type,
-            uuid: entity.uuid,
+            uuid: doc.uuid,
             props: entitySpec.props,
         })
 
@@ -39,12 +55,15 @@ describe(`createEntity`, () => {
             dataSource,
         })
 
+        const thing: Thing = {
+            type: `Thing`,
+            props: null,
+        }
+
         // Now create the entity
-        const entity = await createEntity({
+        const entity = await createEntity<Thing>({
             context,
-            entity: {
-                type: `Thing`,
-            },
+            entity: thing,
         })
 
         expect(entity).toMatchObject({
