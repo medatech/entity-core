@@ -5,6 +5,8 @@ import PostgresDataSource from "../PostgresDataSource"
 import getRelationshipPreviousSibling from "./getRelationshipPreviousSibling"
 import getRelationshipNextSibling from "./getRelationshipNextSibling"
 
+import { EntityID, EntityType, EntityRelationship } from "../interfaces"
+
 async function unrelateEntity({
     context,
     relationship,
@@ -14,11 +16,11 @@ async function unrelateEntity({
     targetEntityType,
 }: {
     context: Context
-    relationship: string
-    sourceEntityID: string
-    sourceEntityType: string
-    targetEntityID: string
-    targetEntityType: string
+    relationship: EntityRelationship
+    sourceEntityID: EntityID
+    sourceEntityType: EntityType
+    targetEntityID: EntityID
+    targetEntityType: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()

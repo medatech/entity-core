@@ -1,4 +1,4 @@
-import { Pool, PoolConfig } from 'pg'
+import { Pool, PoolConfig } from "pg"
 import { DataSource, Client } from "@entity-core/datasource"
 import PostgresClient from "./PostgresClient"
 
@@ -10,13 +10,11 @@ class PostgresDataSource extends DataSource {
 
     constructor({
         poolConfig,
-        tablePrefix = ''
-    }:
-        {
-            poolConfig: PoolConfig;
-            tablePrefix?: string;
-        }
-    ) {
+        tablePrefix = ``,
+    }: {
+        poolConfig: PoolConfig
+        tablePrefix?: string
+    }) {
         super()
         this.pool = null
         this.poolConfig = poolConfig
@@ -30,10 +28,10 @@ class PostgresDataSource extends DataSource {
 
     async disconnect(): Promise<void> {
         // End all the clients
-        await Promise.all(this.clients.map(c => c.release()));
+        await Promise.all(this.clients.map((c) => c.release()))
         if (this.pool !== null) {
             await this.pool.end()
-            this.pool = null;
+            this.pool = null
         }
     }
 
@@ -42,18 +40,18 @@ class PostgresDataSource extends DataSource {
             await this.connect()
         }
 
-        const poolClient = await this.pool.connect();
-        const client = new PostgresClient(poolClient, this);
-        this.registerClient(client);
-        return client;
+        const poolClient = await this.pool.connect()
+        const client = new PostgresClient(poolClient, this)
+        this.registerClient(client)
+        return client
     }
 
     public registerClient(client: Client): void {
-        this.clients.push(client);
+        this.clients.push(client)
     }
 
     public deregisterClient(client: Client): void {
-        this.clients = this.clients.filter(c => c !== client);
+        this.clients = this.clients.filter((c) => c !== client)
     }
 }
 

@@ -1,9 +1,9 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function getChildren({
+async function getChildren<E extends Entity>({
     context,
     parentID,
     parentType = null,
@@ -12,12 +12,12 @@ async function getChildren({
     limit = 10,
 }: {
     context: Context
-    parentID: string
-    parentType: string
-    childType: string
-    fromID?: string
+    parentID: EntityID
+    parentType: EntityType
+    childType: EntityType
+    fromID?: EntityID
     limit?: number
-}): Promise<Array<EntityType>> {
+}): Promise<E[]> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -60,14 +60,14 @@ async function getChildren({
     `)
     )
 
-    const { rows } = (await client.query(query)) as EntityQuery
+    const { rows } = await client.query<EntityRecord>(query)
 
     return rows.map((row) => ({
-        id: row.id.toString(),
+        id: row.id,
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
-    }))
+    })) as E[]
 }
 
 export default getChildren

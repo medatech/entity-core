@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "../Types"
+import { Entity } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function updateEntity({
@@ -8,8 +8,12 @@ async function updateEntity({
     entity,
 }: {
     context: Context
-    entity: EntityType
+    entity: Entity
 }): Promise<void> {
+    if (entity.id === undefined || entity.type === undefined) {
+        throw new Error(`entity must have an id and type`)
+    }
+
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`

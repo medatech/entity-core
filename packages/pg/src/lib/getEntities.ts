@@ -1,9 +1,9 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function getEntities({
+async function getEntities<E extends Entity>({
     context,
     entities,
     limit = null,
@@ -11,7 +11,7 @@ async function getEntities({
     context: Context
     entities: { id: string; type: string }[]
     limit?: number | null
-}): Promise<EntityType[]> {
+}): Promise<E[]> {
     if (entities.length === 0) {
         return []
     }
@@ -47,14 +47,14 @@ async function getEntities({
         query.append(sql`LIMIT ${limit}`)
     }
 
-    const { rows } = (await client.query(query)) as EntityQuery
+    const { rows } = await client.query<EntityRecord>(query)
 
     return rows.map((row) => ({
-        id: row.id.toString(),
+        id: row.id,
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
-    }))
+    })) as E[]
 }
 
 export default getEntities

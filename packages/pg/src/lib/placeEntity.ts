@@ -1,17 +1,17 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { Placement } from "../Types"
 import PostgresDataSource from "../PostgresDataSource"
 import getPreviousSiblingID from "./getPreviousSiblingID"
 import getNextSiblingID from "./getNextSiblingID"
 import getLastChildID from "./getLastChildID"
 import getEntityParent from "./getEntityParent"
+import { EntityID, EntityType, EntityPlacement } from "../interfaces"
 
 interface Siblings {
-    parentID: string
-    parentType: string
-    previousSiblingID: string | null
-    nextSiblingID: string | null
+    parentID: EntityID
+    parentType: EntityType
+    previousSiblingID: EntityID | null
+    nextSiblingID: EntityID | null
 }
 
 async function getSiblings({
@@ -21,15 +21,15 @@ async function getSiblings({
     _lock = false,
 }: {
     context: Context
-    childEntityType: string
-    placement: Placement
+    childEntityType: EntityType
+    placement: EntityPlacement
     _lock: boolean
 }): Promise<Siblings> {
     // If we're placing a child, we want to reference the parent accordingly
-    let parentID: string
-    let parentType: string
-    let previousSiblingID: string | null = null
-    let nextSiblingID: string | null = null
+    let parentID: EntityID
+    let parentType: EntityType
+    let previousSiblingID: EntityID | null = null
+    let nextSiblingID: EntityID | null = null
 
     // If the placement is a child plament, then we want to put it at the end of the children list
     if (placement.type === `child`) {
@@ -92,7 +92,7 @@ async function getSiblings({
         parentType,
         previousSiblingID,
         nextSiblingID,
-    }
+    } as Siblings
 }
 
 /**
@@ -105,8 +105,8 @@ async function detachChild({
     type,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
@@ -162,8 +162,8 @@ async function attachChild({
     siblings,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
     siblings: Siblings
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
@@ -225,10 +225,10 @@ async function placeEntity({
     placement,
 }: {
     context: Context
-    id: string
-    type: string
-    placement: Placement
-}) {
+    id: EntityID
+    type: EntityType
+    placement: EntityPlacement
+}): Promise<void> {
     // Work out the siblings based on the placement
     const siblings = await getSiblings({
         context,

@@ -1,19 +1,19 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityQuery } from "../Types"
+import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function getEntity<O>({
+async function getEntity<E extends Entity>({
     context,
     id,
     type,
     _lock = false,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
     _lock?: boolean
-}): Promise<O | null> {
+}): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -32,22 +32,20 @@ async function getEntity<O>({
         query.append(`FOR UPDATE`)
     }
 
-    const {
-        rows: [row = null],
-    } = (await client.query(query)) as EntityQuery
-
-    if (row === null) {
+    const result = await client.query<EntityRecord>(query)
+    if (result.rows.length === 0) {
         return null
     }
+    const record = result.rows[0]
 
-    const entity = {
-        id: row.id.toString(),
-        type: row.entity_type,
-        uuid: row.uuid,
-        props: row.props,
-    }
+    const outputEntity = {
+        id: record.id,
+        type: record.entity_type,
+        uuid: record.uuid,
+        props: record.props,
+    } as E
 
-    return (<unknown>entity) as O
+    return outputEntity
 }
 
 export default getEntity

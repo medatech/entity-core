@@ -1,6 +1,11 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType } from "../Types"
+import {
+    EntityID,
+    EntityType,
+    EntityRelationship,
+    EntitySibling,
+} from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function getRelationshipPreviousSibling({
@@ -13,13 +18,13 @@ async function getRelationshipPreviousSibling({
     _lock = false,
 }: {
     context: Context
-    relationship: string
-    fromID: string
-    fromType: string
-    entityID: string
-    entityType: string
+    relationship: EntityRelationship
+    fromID: EntityID
+    fromType: EntityType
+    entityID: EntityID
+    entityType: EntityType
     _lock: boolean
-}): Promise<EntityType | null> {
+}): Promise<EntitySibling | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const entityRelTable = dataSource.tablePrefix + `entity_relationship`
@@ -28,7 +33,10 @@ async function getRelationshipPreviousSibling({
 
     const optionalUpdate = _lock ? `FOR UPDATE` : ``
 
-    const { rows } = (await client.query(
+    const { rows } = await client.query<{
+        to_id: EntityID
+        to_type: EntityType
+    }>(
         sql`
         SELECT to_id, to_type
           FROM "`
@@ -44,13 +52,13 @@ async function getRelationshipPreviousSibling({
          LIMIT 1
          `.append(optionalUpdate)
             )
-    )) as { rows: Array<{ to_id: string; to_type: string }> }
+    )
 
     if (rows.length > 0) {
         return {
             id: rows[0].to_id,
             type: rows[0].to_type,
-        }
+        } as EntitySibling
     } else {
         return null
     }

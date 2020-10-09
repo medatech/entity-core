@@ -1,8 +1,8 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import { Entity, EntityID, EntityType } from "../interfaces"
 
-// TODO
 import getChildren from "./getChildren"
 import unrelateEntity from "./unrelateEntity"
 import getParent from "./getParent"
@@ -15,8 +15,8 @@ async function _deleteEntity({
     isChild,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
     isChild: boolean
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
@@ -29,14 +29,14 @@ async function _deleteEntity({
     // We need to remove all the children entities first
     // Start by getting all the possible child entity_types in case there are
     // multiple children types
-    const { rows: childRows } = (await client.query(
+    const { rows: childRows } = await client.query<{ entity_type: string }>(
         sql`
         SELECT DISTINCT entity_type FROM "`.append(entityTable).append(sql`"
          WHERE tenant_id = ${tenantID}
            AND parent = ${id}
            AND parent_type = ${type}
     `)
-    )) as { rows: Array<{ entity_type: string }> }
+    )
 
     for (let i = 0; i < childRows.length; i += 1) {
         const childType = childRows[i].entity_type
@@ -45,7 +45,7 @@ async function _deleteEntity({
         let fromID = null
         let children = null
         do {
-            children = await getChildren({
+            children = await getChildren<Entity>({
                 context,
                 parentID: id,
                 parentType: type,
@@ -71,7 +71,11 @@ async function _deleteEntity({
     }
 
     // Find anything that relates to this entity, then remove it from the relationship
-    const { rows: inboundRows } = (await client.query(
+    const { rows: inboundRows } = await client.query<{
+        name: string
+        from_id: EntityID
+        from_type: EntityType
+    }>(
         sql`
         SELECT
             name,
@@ -82,7 +86,7 @@ async function _deleteEntity({
           AND to_type = ${type}
           AND tenant_id = ${tenantID}
     `)
-    )) as { rows: Array<{ name: string; from_id: string; from_type: string }> }
+    )
 
     for (let i = 0; i < inboundRows.length; i += 1) {
         const record = inboundRows[i]
@@ -98,7 +102,7 @@ async function _deleteEntity({
 
     if (!isChild) {
         // We need to remove this entity from the parent so the siblings are kept in tact
-        const parent = await getParent({
+        const parent = await getParent<Entity>({
             context,
             type,
             id,
@@ -130,8 +134,8 @@ function deleteEntity({
     type,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
 }): Promise<void> {
     return _deleteEntity({ context, id, type, isChild: false })
 }

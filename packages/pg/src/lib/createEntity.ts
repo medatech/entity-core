@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { Entity, EntityRecord } from "../Types"
+import { Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function createEntity<E extends Entity>({
@@ -35,12 +35,12 @@ async function createEntity<E extends Entity>({
     }
     const record = result.rows[0]
 
-    const outputEntity: E = {
-        id: record.id.toString(),
+    const outputEntity = {
+        id: record.id,
         type: record.entity_type,
         uuid: record.uuid,
         props: record.props,
-    }
+    } as E
 
     return outputEntity
 }

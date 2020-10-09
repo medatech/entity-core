@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import { EntityID, EntityType } from "../interfaces"
 
 async function getPreviousSiblingID({
     context,
@@ -9,10 +10,10 @@ async function getPreviousSiblingID({
     _lock = false,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
     _lock: boolean
-}): Promise<string> {
+}): Promise<EntityID | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -20,7 +21,7 @@ async function getPreviousSiblingID({
 
     const optionalUpdate = _lock ? `FOR UPDATE` : ``
 
-    const { rows } = (await client.query(
+    const { rows } = await client.query<{ previous: EntityID }>(
         sql`
         SELECT previous
           FROM "`
@@ -34,7 +35,7 @@ async function getPreviousSiblingID({
          `
             )
             .append(optionalUpdate)
-    )) as { rows: Array<{ previous: string }> }
+    )
 
     if (rows.length > 0) {
         return rows[0].previous

@@ -1,8 +1,8 @@
 import { createEntity, getEntity } from "."
 
 import { Context } from "@entity-core/context"
-import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
-import { Entity } from "../Types"
+import { beforeEachTest, afterAllTests, dataSource } from "../fixtures_temp"
+import { Entity } from "../interfaces"
 
 interface Document extends Entity {
     type: "Document"

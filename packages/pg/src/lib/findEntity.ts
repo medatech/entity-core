@@ -1,9 +1,9 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
-async function findEntity<T>({
+async function findEntity<E extends Entity>({
     context,
     props,
     type,
@@ -11,7 +11,7 @@ async function findEntity<T>({
     context: Context
     props: Record<string, string | number | null | boolean>
     type: string
-}): Promise<T | null> {
+}): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
@@ -41,18 +41,18 @@ async function findEntity<T>({
 
     const {
         rows: [row = null],
-    } = (await client.query(query)) as EntityQuery
+    } = await client.query<EntityRecord>(query)
 
     if (row === null) {
         return null
     }
 
-    return (<unknown>{
-        id: row.id.toString(),
+    return {
+        id: row.id,
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
-    }) as T
+    } as E
 }
 
 export default findEntity

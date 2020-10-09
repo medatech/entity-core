@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { EntityType, EntityQuery } from "../Types"
+import { EntityID, EntityType } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 
 async function countChildren({
@@ -9,8 +9,8 @@ async function countChildren({
     childEntityType = null,
 }: {
     context: Context
-    parentID: string
-    childEntityType: string
+    parentID: EntityID
+    childEntityType: EntityType
 }): Promise<number> {
     if (childEntityType === null) {
         throw new Error(`Invalid child type of ${childEntityType}`)
@@ -29,9 +29,7 @@ async function countChildren({
         AND parent = ${parentID}
     `)
 
-    const { rows } = (await client.query(query)) as {
-        rows: { total: number }[]
-    }
+    const { rows } = await client.query<{ total: number }>(query)
 
     return rows.length > 0 ? rows[0].total : 0
 }

@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import { EntityID, EntityType, EntityParent } from "../interfaces"
 
 async function getEntityParent({
     context,
@@ -8,15 +9,18 @@ async function getEntityParent({
     type,
 }: {
     context: Context
-    id: string
-    type: string
-}): Promise<{ id: string; type: string } | null> {
+    id: EntityID
+    type: EntityType
+}): Promise<EntityParent | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
     const tenantID = context.getTenantID()
     const table = dataSource.tablePrefix + `entity`
 
-    const { rows } = (await client.query(
+    const { rows } = await client.query<{
+        parent: EntityID
+        parent_type: EntityType
+    }>(
         sql`
             SELECT parent, parent_type
             FROM "`
@@ -29,13 +33,13 @@ async function getEntityParent({
             LIMIT 1
         `
             )
-    )) as { rows: Array<{ parent: string; parent_type: string }> }
+    )
 
     if (rows.length > 0) {
         return {
             id: rows[0].parent,
             type: rows[0].parent_type,
-        }
+        } as EntityParent
     }
 
     return null

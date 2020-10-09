@@ -5,6 +5,8 @@ import PostgresDataSource from "../PostgresDataSource"
 import getNextSiblingID from "./getNextSiblingID"
 import getPreviousSiblingID from "./getPreviousSiblingID"
 
+import { EntityID, EntityType } from "../interfaces"
+
 /**
  * Remove this entity from being a child to the parent
  */
@@ -14,8 +16,8 @@ async function removeChildEntity({
     type,
 }: {
     context: Context
-    id: string
-    type: string
+    id: EntityID
+    type: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = await dataSource.getClient()
