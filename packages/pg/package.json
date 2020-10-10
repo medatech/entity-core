@@ -9,6 +9,7 @@
     "scripts": {
         "build": "tsc",
         "test": "jest --runInBand src",
+        "test:watch": "jest --runInBand --watch src",
         "coverage": "jest --runInBand --coverage src",
         "lint": "eslint ./src/**/*.ts",
         "lint:autofix": "eslint --fix ./src/**/*.ts"

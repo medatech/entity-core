@@ -22,6 +22,7 @@ class PostgresClient extends Client {
                 `Unable to perform query as the client has already been released`
             )
         }
+
         return this.poolClient.query<R>(query, variables)
     }
 

@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 import getPreviousSiblingID from "./getPreviousSiblingID"
 import getNextSiblingID from "./getNextSiblingID"
 import getLastChildID from "./getLastChildID"
@@ -109,7 +110,7 @@ async function detachChild({
     type: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const tenantID = context.getTenantID()
     const table = dataSource.tablePrefix + `entity`
 
@@ -167,7 +168,7 @@ async function attachChild({
     siblings: Siblings
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
     const tenantID = context.getTenantID()

@@ -7,6 +7,7 @@ import {
     EntitySibling,
 } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 
 async function getRelationshipPreviousSibling({
     context,
@@ -26,7 +27,7 @@ async function getRelationshipPreviousSibling({
     _lock: boolean
 }): Promise<EntitySibling | null> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const entityRelTable = dataSource.tablePrefix + `entity_relationship`
 
     const tenantID = context.getTenantID()

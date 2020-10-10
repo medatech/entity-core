@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 
 import getNextSiblingID from "./getNextSiblingID"
 import getPreviousSiblingID from "./getPreviousSiblingID"
@@ -20,7 +21,7 @@ async function removeChildEntity({
     type: EntityType
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
     const tenantID = context.getTenantID()
 

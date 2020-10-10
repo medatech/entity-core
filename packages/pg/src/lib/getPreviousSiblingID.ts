@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 import { EntityID, EntityType } from "../interfaces"
 
 async function getPreviousSiblingID({
@@ -15,7 +16,7 @@ async function getPreviousSiblingID({
     _lock: boolean
 }): Promise<EntityID | null> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
     const tenantID = context.getTenantID()
 

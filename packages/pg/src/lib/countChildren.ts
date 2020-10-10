@@ -2,6 +2,7 @@ import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import { EntityID, EntityType } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 
 async function countChildren({
     context,
@@ -17,8 +18,8 @@ async function countChildren({
     }
 
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
+    const client = (await context.getDB()) as PostgresClient
     const tenantID = context.getTenantID()
 
     const query = sql`

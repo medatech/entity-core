@@ -2,6 +2,7 @@ import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import { Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 
 async function createEntity<E extends Entity>({
     context,
@@ -11,8 +12,8 @@ async function createEntity<E extends Entity>({
     entity: Entity
 }): Promise<E> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
     const table = dataSource.tablePrefix + `entity`
+    const client = (await context.getDB()) as PostgresClient
 
     const tenantID = context.getTenantID()
     const uuid = entity.uuid || context.uuid()

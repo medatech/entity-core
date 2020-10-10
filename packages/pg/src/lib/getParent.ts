@@ -2,6 +2,7 @@ import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 
 async function getParent<E extends Entity>({
     context,
@@ -13,7 +14,7 @@ async function getParent<E extends Entity>({
     type: EntityType
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
     const tenantID = context.getTenantID()

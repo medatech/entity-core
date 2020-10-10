@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
+import PostgresClient from "../PostgresClient"
 import { Entity, EntityID, EntityType } from "../interfaces"
 
 import getChildren from "./getChildren"
@@ -20,7 +21,7 @@ async function _deleteEntity({
     isChild: boolean
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
-    const client = await dataSource.getClient()
+    const client = (await context.getDB()) as PostgresClient
     const entityTable = dataSource.tablePrefix + `entity`
     const entityRelTable = dataSource.tablePrefix + `entity_relationship`
 
