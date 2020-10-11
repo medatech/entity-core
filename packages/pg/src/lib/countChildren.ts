@@ -32,7 +32,7 @@ async function countChildren({
 
     const { rows } = await client.query<{ total: number }>(query)
 
-    return rows.length > 0 ? rows[0].total : 0
+    return rows.length > 0 ? +rows[0].total : 0
 }
 
 export default countChildren

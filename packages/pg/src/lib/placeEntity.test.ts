@@ -193,4 +193,355 @@ describe(`placeEntity`, () => {
 
         await context.end()
     })
+
+    it(`should allow me to move one child entity from one parent to antoher`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        function createProject(name: string): Promise<Project> {
+            return createEntity<Project>({
+                context,
+                entity: {
+                    type: `Project`,
+                    props: {
+                        title: name,
+                    },
+                },
+            })
+        }
+
+        function createTask(title: string): Promise<Task> {
+            return createEntity<Task>({
+                context,
+                entity: {
+                    type: `Task`,
+                    props: {
+                        title: title,
+                        status: `todo`,
+                    },
+                },
+            })
+        }
+
+        function addTaskToProject(task: Task, project: Project): Promise<void> {
+            return placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `child`,
+                    entityID: project.id,
+                    entityType: project.type,
+                },
+            })
+        }
+
+        function getTasks(project: Project): Promise<Task[]> {
+            return getChildren({
+                context,
+                parentID: project.id,
+                parentType: project.type,
+                childType: `Task`,
+            })
+        }
+
+        const project1 = await createProject(`Project 1`)
+        const project2 = await createProject(`Project 2`)
+        const task = await createTask(`task`)
+
+        await addTaskToProject(task, project1)
+
+        // Now move it to project2
+        await addTaskToProject(task, project2)
+
+        const project1Tasks = await getTasks(project1)
+        expect(project1Tasks.length).toBe(0)
+
+        const project2Tasks = await getTasks(project2)
+        expect(project2Tasks.length).toBe(1)
+
+        await context.end()
+    })
+
+    it(`should allow me to place the same child twice`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        function createProject(name: string): Promise<Project> {
+            return createEntity<Project>({
+                context,
+                entity: {
+                    type: `Project`,
+                    props: {
+                        title: name,
+                    },
+                },
+            })
+        }
+
+        function createTask(title: string): Promise<Task> {
+            return createEntity<Task>({
+                context,
+                entity: {
+                    type: `Task`,
+                    props: {
+                        title: title,
+                        status: `todo`,
+                    },
+                },
+            })
+        }
+
+        function addTaskToProject(task: Task, project: Project): Promise<void> {
+            return placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `child`,
+                    entityID: project.id,
+                    entityType: project.type,
+                },
+            })
+        }
+
+        function getTasks(project: Project): Promise<Task[]> {
+            return getChildren({
+                context,
+                parentID: project.id,
+                parentType: project.type,
+                childType: `Task`,
+            })
+        }
+
+        const project = await createProject(`Project`)
+        const task = await createTask(`task`)
+
+        await addTaskToProject(task, project)
+        await addTaskToProject(task, project)
+
+        const projectTasks = await getTasks(project)
+        expect(projectTasks.length).toBe(1)
+
+        await context.end()
+    })
+
+    it(`should stop me making the same thing the child and parent`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        const thing = await createEntity<Thing>({
+            context,
+            entity: {
+                type: `Thing`,
+                props: null,
+            },
+        })
+
+        await expect(
+            placeEntity({
+                context,
+                id: thing.id,
+                type: thing.type,
+                placement: {
+                    type: `child`,
+                    entityID: thing.id,
+                    entityType: thing.type,
+                },
+            })
+        ).rejects.toEqual({
+            error: `Parent and child cannot be the same entity`,
+        })
+
+        await context.end()
+    })
+
+    it(`should stop me creating a descendant child where it's also the parent`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        function createTask(title: string): Promise<Task> {
+            return createEntity<Task>({
+                context,
+                entity: {
+                    type: `Task`,
+                    props: {
+                        title: title,
+                        status: `todo`,
+                    },
+                },
+            })
+        }
+
+        const parentTask = await createTask(`parent`)
+        const subTask = await createTask(`sub task`)
+
+        // Make the sub task a child of the parent task
+        await placeEntity({
+            context,
+            id: subTask.id,
+            type: subTask.type,
+            placement: {
+                type: `child`,
+                entityID: parentTask.id,
+                entityType: parentTask.type,
+            },
+        })
+
+        // Now try to make the parent task a child of the sub task
+        await expect(
+            placeEntity({
+                context,
+                id: parentTask.id,
+                type: parentTask.type,
+                placement: {
+                    type: `child`,
+                    entityID: subTask.id,
+                    entityType: subTask.type,
+                },
+            })
+        ).rejects.toEqual({
+            error: `Child cannot also be a grandparent`,
+        })
+
+        await context.end()
+    })
+
+    it(`should stop a child being placed before itself`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        function createProject(name: string): Promise<Project> {
+            return createEntity<Project>({
+                context,
+                entity: {
+                    type: `Project`,
+                    props: {
+                        title: name,
+                    },
+                },
+            })
+        }
+
+        function createTask(title: string): Promise<Task> {
+            return createEntity<Task>({
+                context,
+                entity: {
+                    type: `Task`,
+                    props: {
+                        title: title,
+                        status: `todo`,
+                    },
+                },
+            })
+        }
+
+        function addTaskToProject(task: Task, project: Project): Promise<void> {
+            return placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `child`,
+                    entityID: project.id,
+                    entityType: project.type,
+                },
+            })
+        }
+
+        const project = await createProject(`Project`)
+        const task = await createTask(`task`)
+
+        await addTaskToProject(task, project)
+
+        // Now try to place the task before itself
+        await expect(
+            await placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `before`,
+                    entityID: task.id,
+                    entityType: task.type,
+                },
+            })
+        ).rejects.toEqual({
+            error: `An entity cannot be placed before itself`,
+        })
+
+        await context.end()
+    })
+
+    it(`should stop a child being placed after itself`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        function createProject(name: string): Promise<Project> {
+            return createEntity<Project>({
+                context,
+                entity: {
+                    type: `Project`,
+                    props: {
+                        title: name,
+                    },
+                },
+            })
+        }
+
+        function createTask(title: string): Promise<Task> {
+            return createEntity<Task>({
+                context,
+                entity: {
+                    type: `Task`,
+                    props: {
+                        title: title,
+                        status: `todo`,
+                    },
+                },
+            })
+        }
+
+        function addTaskToProject(task: Task, project: Project): Promise<void> {
+            return placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `child`,
+                    entityID: project.id,
+                    entityType: project.type,
+                },
+            })
+        }
+
+        const project = await createProject(`Project`)
+        const task = await createTask(`task`)
+
+        await addTaskToProject(task, project)
+
+        // Now try to place the task before itself
+        await expect(
+            await placeEntity({
+                context,
+                id: task.id,
+                type: task.type,
+                placement: {
+                    type: `after`,
+                    entityID: task.id,
+                    entityType: task.type,
+                },
+            })
+        ).rejects.toEqual({
+            error: `An entity cannot be placed after itself`,
+        })
+
+        await context.end()
+    })
 })
