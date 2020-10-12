@@ -352,9 +352,9 @@ describe(`placeEntity`, () => {
                     entityType: thing.type,
                 },
             })
-        ).rejects.toEqual({
-            error: `Parent and child cannot be the same entity`,
-        })
+        ).rejects.toThrow(
+            `Entity cannot be placed as a child or sibling of itself`
+        )
 
         await context.end()
     })
@@ -404,9 +404,7 @@ describe(`placeEntity`, () => {
                     entityType: subTask.type,
                 },
             })
-        ).rejects.toEqual({
-            error: `Child cannot also be a grandparent`,
-        })
+        ).rejects.toThrow(`Child cannot also be a parent or grandparent`)
 
         await context.end()
     })
@@ -461,7 +459,7 @@ describe(`placeEntity`, () => {
 
         // Now try to place the task before itself
         await expect(
-            await placeEntity({
+            placeEntity({
                 context,
                 id: task.id,
                 type: task.type,
@@ -471,9 +469,9 @@ describe(`placeEntity`, () => {
                     entityType: task.type,
                 },
             })
-        ).rejects.toEqual({
-            error: `An entity cannot be placed before itself`,
-        })
+        ).rejects.toThrow(
+            `Entity cannot be placed as a child or sibling of itself`
+        )
 
         await context.end()
     })
@@ -528,7 +526,7 @@ describe(`placeEntity`, () => {
 
         // Now try to place the task before itself
         await expect(
-            await placeEntity({
+            placeEntity({
                 context,
                 id: task.id,
                 type: task.type,
@@ -538,9 +536,9 @@ describe(`placeEntity`, () => {
                     entityType: task.type,
                 },
             })
-        ).rejects.toEqual({
-            error: `An entity cannot be placed after itself`,
-        })
+        ).rejects.toThrow(
+            `Entity cannot be placed as a child or sibling of itself`
+        )
 
         await context.end()
     })

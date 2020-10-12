@@ -6,6 +6,7 @@ import getPreviousSiblingID from "./getPreviousSiblingID"
 import getNextSiblingID from "./getNextSiblingID"
 import getLastChildID from "./getLastChildID"
 import getEntityParent from "./getEntityParent"
+import getParents from "./getParents"
 import { EntityID, EntityType, EntityPlacement } from "../interfaces"
 
 interface Siblings {
@@ -248,6 +249,23 @@ async function placeEntity({
     type: EntityType
     placement: EntityPlacement
 }): Promise<void> {
+    if (id === placement.entityID) {
+        throw new Error(
+            `Entity cannot be placed as a child or sibling of itself`
+        )
+    }
+
+    // Make sure the child isn't one of the parents
+    const parents = await getParents({
+        context,
+        id: placement.entityID,
+        type: placement.entityType,
+    })
+
+    if (parents.findIndex((parent) => parent.id === id) !== -1) {
+        throw new Error(`Child cannot also be a parent or grandparent`)
+    }
+
     // Work out the siblings based on the placement
     const siblings = await getSiblings({
         context,
