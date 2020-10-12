@@ -17,11 +17,13 @@ interface Siblings {
 
 async function getSiblings({
     context,
+    childEntityID,
     childEntityType,
     placement,
     _lock = false,
 }: {
     context: Context
+    childEntityID: EntityID
     childEntityType: EntityType
     placement: EntityPlacement
     _lock: boolean
@@ -45,6 +47,11 @@ async function getSiblings({
             childEntityType,
             _lock,
         })
+
+        // If the last child was the entity we're placing, then return no sibling
+        if (previousSiblingID === childEntityID) {
+            previousSiblingID = null
+        }
     } else {
         // We're placing this before or after another, but we still need the parent details
         // so let's look this up from the sibling we're about to place this next to
@@ -153,6 +160,17 @@ async function detachChild({
                 `)
             )
         }
+
+        // Remove parent references to the entity we just detached
+        await client.query(
+            sql`
+                UPDATE "`.append(table).append(sql`"
+                SET is_last_child = false, parent = null, parent_type = null
+                WHERE tenant_id = ${tenantID}
+                AND entity_type = ${type}
+                AND id = ${id}
+            `)
+        )
     }
 }
 
@@ -233,10 +251,12 @@ async function placeEntity({
     // Work out the siblings based on the placement
     const siblings = await getSiblings({
         context,
+        childEntityID: id,
         childEntityType: type,
         placement,
         _lock: true,
     })
+
     // Detach the entity from any previous child relationships
     await detachChild({ context, id, type })
     // Now attach the child back again to the new siblings
