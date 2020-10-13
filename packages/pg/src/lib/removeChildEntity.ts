@@ -50,25 +50,12 @@ async function removeChildEntity({
                AND id = ${nextSiblingID}
         `)
         )
-    } else {
-        // There is no next sibling, so update the previous to be the last child if it exists
-        if (previousSiblingID !== null) {
-            await client.query(
-                sql`
-                UPDATE "`.append(table).append(sql`"
-                   SET is_last_child = true
-                 WHERE tenant_id = ${tenantID}
-                   AND entity_type = ${type}
-                   AND id = ${previousSiblingID}
-            `)
-            )
-        }
     }
 
     // Now remove the current entity from being a child
     await client.query(sql`
         UPDATE entity
-           SET parent = null, parent_type = null, is_last_child = false
+           SET parent = null, parent_type = null, previous = null
          WHERE tenant_id = ${tenantID}
            AND entity_type = ${type}
            AND id = ${id}

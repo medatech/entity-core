@@ -26,17 +26,31 @@ async function getLastChildID({
 
     const { rows } = await client.query<{ id: EntityID }>(
         sql`
-            SELECT id FROM "`
+            SELECT e.id FROM "`
             .append(table)
             .append(
-                sql`"
-                    WHERE tenant_id = ${tenantID}
-                    AND entity_type = ${childEntityType}
-                    AND parent = ${parentID}
-                    AND parent_type = ${parentType}
-                    AND is_last_child = true
+                sql`" e
+                    WHERE e.tenant_id = ${tenantID}
+                    AND e. entity_type = ${childEntityType}
+                    AND e. parent = ${parentID}
+                    AND e. parent_type = ${parentType}
+                    -- AND there is no next row referencing this (so it's the last)
+                    AND NOT EXISTS (
+                        SELECT
+                        FROM "`
+                    .append(table)
+                    .append(
+                        sql`" n
+                        WHERE n.tenant_id = ${tenantID}
+                        AND n.entity_type = ${childEntityType}
+                        AND n.parent = ${parentID}
+                        AND n.parent_type = ${parentType}
+                        AND n.previous = e.id
+                        LIMIT 1
+                      )
                     LIMIT 1
                 `
+                    )
             )
             .append(optionalUpdate)
     )

@@ -36,3 +36,10 @@ export interface EntityParent {
     id: EntityID
     type: EntityType
 }
+
+export interface EntitySiblings {
+    parentID: EntityID
+    parentType: EntityType
+    previousSiblingID: EntityID | null
+    nextSiblingID: EntityID | null
+}

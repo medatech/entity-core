@@ -1,4 +1,4 @@
-import { createEntity } from "."
+import { createEntity, getChildren } from "."
 
 import { Context } from "@entity-core/context"
 import { beforeEachTest, afterAllTests, dataSource } from "../Fixtures"
@@ -9,6 +9,13 @@ interface Document extends Entity {
     props: {
         title: string
         shared: boolean
+    }
+}
+
+interface Page extends Entity {
+    type: "Page"
+    props: {
+        number: number
     }
 }
 
@@ -72,6 +79,94 @@ describe(`createEntity`, () => {
             uuid: entity.uuid,
             props: null,
         })
+
+        await context.end()
+    })
+
+    it.only(`should create an entity as a child of a paent entity`, async () => {
+        const context = new Context({
+            dataSource,
+        })
+
+        const doc = await createEntity<Document>({
+            context,
+            entity: {
+                type: `Document`,
+                props: {
+                    title: `Doc`,
+                },
+            },
+        })
+
+        // Now create the pages
+        const page2 = await createEntity<Page>({
+            context,
+            entity: {
+                type: `Page`,
+                props: {
+                    number: 2,
+                },
+            },
+            placement: {
+                type: `child`,
+                entityID: doc.id,
+                entityType: doc.type,
+            },
+        })
+
+        const page1 = await createEntity<Page>({
+            context,
+            entity: {
+                type: `Page`,
+                props: {
+                    number: 1,
+                },
+            },
+            placement: {
+                type: `before`,
+                entityID: page2.id,
+                entityType: page2.type,
+            },
+        })
+
+        await createEntity<Page>({
+            context,
+            entity: {
+                type: `Page`,
+                props: {
+                    number: 3,
+                },
+            },
+            placement: {
+                type: `after`,
+                entityID: page2.id,
+                entityType: page2.type,
+            },
+        })
+
+        await createEntity<Page>({
+            context,
+            entity: {
+                type: `Page`,
+                props: {
+                    number: 4,
+                },
+            },
+            placement: {
+                type: `child`,
+                entityID: doc.id,
+                entityType: doc.type,
+            },
+        })
+
+        const pages = await getChildren<Page>({
+            context,
+            parentID: doc.id,
+            parentType: doc.type,
+            childType: `Page`,
+        })
+
+        expect(pages.map((page) => page.props.number)).toEqual([1, 2, 3, 4])
 
         await context.end()
     })

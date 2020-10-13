@@ -12,7 +12,7 @@ interface Document extends Entity {
     }
 }
 
-describe(`createEntity`, () => {
+describe(`updateEntity`, () => {
     beforeEach(beforeEachTest)
 
     afterEach(afterAllTests)

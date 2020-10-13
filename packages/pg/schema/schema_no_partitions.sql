@@ -14,8 +14,7 @@ CREATE TABLE ec_entity (
     updated_at              TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     previous                BIGINT NULL,
     parent                  BIGINT NULL,
-    parent_type             VARCHAR(32) NULL,
-    is_last_child           BOOLEAN NOT NULL DEFAULT FALSE
+    parent_type             VARCHAR(32) NULL
 );
 
 -- uuid
@@ -48,7 +47,6 @@ CREATE TABLE ec_relationship (
     props               JSONB NULL,
     previous            BIGINT NULL, -- Our link list in the relationship
     previous_type       VARCHAR(32) NULL,
-    is_last             BOOLEAN NOT NULL DEFAULT FALSE,
     created_at          TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 ) PARTITION BY RANGE (tenant_id);
 
