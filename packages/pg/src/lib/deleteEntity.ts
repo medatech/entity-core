@@ -23,7 +23,7 @@ async function _deleteEntity({
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityTable = dataSource.tablePrefix + `entity`
-    const entityRelTable = dataSource.tablePrefix + `entity_relationship`
+    const entityRelTable = dataSource.tablePrefix + `relationship`
 
     const tenantID = context.getTenantID()
 

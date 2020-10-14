@@ -25,7 +25,7 @@ async function unrelateEntity({
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
-    const entityRelTable = dataSource.tablePrefix + `entity_relationship`
+    const entityRelTable = dataSource.tablePrefix + `relationship`
 
     const tenantID = context.getTenantID()
 
@@ -65,22 +65,6 @@ async function unrelateEntity({
                AND to_type = ${oldNext.type}
         `)
         )
-    } else {
-        // There is no next entity, but if there is a previous one, set that to the last entity in the list
-        if (oldPrevious !== null) {
-            await client.query(
-                sql`
-                UPDATE "`.append(entityRelTable).append(sql`"
-                   SET is_last = true
-                 WHERE tenant_id = ${tenantID}
-                   AND name = ${relationship}
-                   AND from_id = ${sourceEntityID}
-                   AND from_type = ${sourceEntityType}
-                   AND to_id = ${oldPrevious.id}
-                   AND to_type = ${oldPrevious.type}
-            `)
-            )
-        }
     }
 
     // Now remove this entity from the relationship before we insert it again

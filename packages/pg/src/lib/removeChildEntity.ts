@@ -53,13 +53,15 @@ async function removeChildEntity({
     }
 
     // Now remove the current entity from being a child
-    await client.query(sql`
-        UPDATE entity
+    await client.query(
+        sql`
+        UPDATE "`.append(table).append(sql`"
            SET parent = null, parent_type = null, previous = null
          WHERE tenant_id = ${tenantID}
            AND entity_type = ${type}
            AND id = ${id}
     `)
+    )
 }
 
 export default removeChildEntity
