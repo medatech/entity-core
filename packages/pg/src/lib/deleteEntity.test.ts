@@ -68,7 +68,7 @@ describe(`deleteEntity`, () => {
         await context.end()
     })
 
-    it.only(`should allow me to delete an entity when it has children`, async () => {
+    it(`should allow me to delete an entity when it has children`, async () => {
         const context = new Context({
             dataSource,
         })
@@ -110,4 +110,8 @@ describe(`deleteEntity`, () => {
 
         await context.end()
     })
+
+    it.todo(`should error if we are deleting an entity that doesn't exist`)
+
+    it.todo(`should remove an entity in a relationship when it is deleted`)
 })
