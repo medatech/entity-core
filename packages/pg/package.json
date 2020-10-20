@@ -7,7 +7,7 @@
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --build tsconfig.dist.json",
         "test": "jest --runInBand src",
         "test:watch": "jest --runInBand --watch src",
         "coverage": "jest --runInBand --coverage src",
@@ -29,7 +29,7 @@
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",
         "@babel/preset-typescript": "^7.10.4",
-        "@types/jest": "^26.0.10",
+        "@types/jest": "^26.0.15",
         "@types/node": "^14.6.0",
         "@types/pg": "^7.14.4",
         "@typescript-eslint/eslint-plugin": "^3.9.1",
