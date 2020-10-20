@@ -22,7 +22,7 @@
         "src/**/*",
         "node_modules/@types",
         "test/createEntity.test.ts",
-        "test/Fixtures"
+        "test/fixtures"
     ],
     "exclude": [
         "src/**/*.test.ts",
