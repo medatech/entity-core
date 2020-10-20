@@ -8,7 +8,7 @@
     "license": "MIT",
     "scripts": {
         "build": "tsc --build tsconfig.dist.json",
-        "test": "jest --runInBand src",
+        "test": "jest --runInBand .",
         "test:watch": "jest --runInBand --watch src",
         "coverage": "jest --runInBand --coverage src",
         "lint": "eslint ./src/**/*.ts",
