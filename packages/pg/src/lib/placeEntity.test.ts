@@ -34,7 +34,7 @@ describe(`placeEntity`, () => {
         })
 
         const project = await createEntity<Project>({
-             context,
+            context,
             entity: {
                 type: `Project`,
                 props: {

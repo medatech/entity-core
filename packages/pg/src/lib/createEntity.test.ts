@@ -114,7 +114,7 @@ describe(`createEntity`, () => {
             },
         })
 
-        const page1 = await createEntity<Page>({
+        await createEntity<Page>({
             context,
             entity: {
                 type: `Page`,

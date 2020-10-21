@@ -4,7 +4,7 @@ import { Entity } from "../src/interfaces"
 import { Context } from "@entity-core/context"
 
 interface User extends Entity {
-    type: "User",
+    type: "User"
     props: {
         username: string
         email: string
@@ -35,79 +35,77 @@ interface TeamMember extends Entity {
     }
 }
 
-
-describe('multiTenant', () => {
+describe(`multiTenant`, () => {
     beforeEach(beforeEachTest)
     afterEach(afterAllTests)
 
-    it('should allow me to create a user in the global tenant and be a member of a team in another', async () => {
-
+    it(`should allow me to create a user in the global tenant and be a member of a team in another`, async () => {
         const globalContext = new Context({
-            dataSource
+            dataSource,
         })
 
         const tenantContext = new Context({
             dataSource,
-            tenantID: 50
+            tenantID: 50,
         })
 
         const user = await createEntity<User>({
             context: globalContext,
             entity: {
-                type: "User",
+                type: `User`,
                 props: {
-                    username: "user1",
-                    email: "user1@example.com",
-                    password: 'password123'
-                }
-            }
+                    username: `user1`,
+                    email: `user1@example.com`,
+                    password: `password123`,
+                },
+            },
         })
 
         // Now create a team in the tenant space
         const team = await createEntity<Team>({
             context: tenantContext,
             entity: {
-                type: "Team",
+                type: `Team`,
                 props: {
-                    name: "Entity Team"
-                }
-            }
+                    name: `Entity Team`,
+                },
+            },
         })
 
         // Create the owner's group
         const group = await createEntity<Group>({
             context: tenantContext,
             entity: {
-                type: "Group",
+                type: `Group`,
                 props: {
-                    name: "Owners",
-                    permission: 'owner'
-                }
+                    name: `Owners`,
+                    permission: `owner`,
+                },
             },
             placement: {
-                type: 'child',
+                type: `child`,
                 entityID: team.id,
-                entityType: team.type
-            }
+                entityType: team.type,
+            },
         })
 
         // Create a member in the owner's group
         const member = await createEntity<TeamMember>({
             context: tenantContext,
             entity: {
-                type: "TeamMember",
+                type: `TeamMember`,
                 props: {
                     userID: user.id,
-                    joined: new Date().getTime()
-                }
+                    joined: new Date().getTime(),
+                },
             },
             placement: {
-                type: 'child',
+                type: `child`,
                 entityID: group.id,
-                entityType: group.type
-            }
+                entityType: group.type,
+            },
         })
 
         expect(member.props.userID).toBe(user.id)
     })
-})  
+})
