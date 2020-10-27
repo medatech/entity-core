@@ -22,8 +22,12 @@ class PostgresDataSource extends DataSource {
         this.clients = []
     }
 
+    private createPool() {
+        return new Pool(this.poolConfig)
+    }
+
     async connect(): Promise<void> {
-        this.pool = new Pool(this.poolConfig)
+        this.pool = this.createPool()
     }
 
     async disconnect(): Promise<void> {
