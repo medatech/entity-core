@@ -1,18 +1,16 @@
 {
-    "name": "@entity-core/pg",
+    "name": "@entity-core/integration-test",
     "version": "1.0.0",
-    "description": "A postgress database driver for entity-core",
+    "description": "Integration tests for the entity-core",
     "main": "./dist/index.js",
     "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {
-        "build": "tsc --build tsconfig.dist.json",
-        "test": "jest .",
-        "test:watch": "jest --watch src",
-        "coverage": "jest --coverage src",
-        "lint": "eslint ./src/**/*.ts",
-        "lint:autofix": "eslint --fix ./src/**/*.ts"
+        "test": "jest --runInBand test",
+        "coverage": "jest --runInBand --coverage test",
+        "lint": "eslint ./test/**/*.ts",
+        "lint:autofix": "eslint --fix ./test/**/*.ts"
     },
     "jest": {
         "transform": {
@@ -26,6 +24,10 @@
         ]
     },
     "devDependencies": {
+        "@entity-core/pg": "^1.0.0",
+        "@entity-core/datasource": "^1.0.0",
+        "@entity-core/context": "^1.0.0",
+        "sql-template-strings": "^2.2.2",
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",
         "@babel/preset-typescript": "^7.10.4",
@@ -39,11 +41,5 @@
         "jest": "^26.4.0",
         "ts-jest": "^26.2.0",
         "typescript": "^3.9.7"
-    },
-    "dependencies": {
-        "@entity-core/context": "^1.0.0",
-        "@entity-core/datasource": "^1.0.0",
-        "pg": "^8.3.0",
-        "sql-template-strings": "^2.2.2"
     }
 }

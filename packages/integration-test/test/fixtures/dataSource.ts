@@ -1,4 +1,4 @@
-import PostgresDataSource from "../PostgresDataSource"
+import { PostgresDataSource } from "@entity-core/pg"
 
 const dataSource = new PostgresDataSource({
     poolConfig: {

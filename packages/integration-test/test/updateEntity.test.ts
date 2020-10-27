@@ -1,8 +1,11 @@
-import { createEntity, updateEntity, getEntity } from "."
+import { createEntity, updateEntity, getEntity, Entity } from "@entity-core/pg"
 
 import { Context } from "@entity-core/context"
-import { beforeEachTest, afterAllTests, dataSource } from "../fixtures"
-import { Entity } from "../interfaces"
+import {
+    beforeEachTest,
+    afterAllTests,
+    dataSource,
+} from "./fixtures"
 
 interface Document extends Entity {
     type: "Document"

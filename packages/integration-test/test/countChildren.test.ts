@@ -1,8 +1,11 @@
-import { createEntity, placeEntity, countChildren } from "."
+import { createEntity, placeEntity, countChildren, Entity } from "@entity-core/pg"
 
 import { Context } from "@entity-core/context"
-import { beforeEachTest, afterAllTests, dataSource } from "../fixtures"
-import { Entity } from "../interfaces"
+import {
+    beforeEachTest,
+    afterAllTests,
+    dataSource,
+} from "./fixtures"
 
 interface Project extends Entity {
     type: "Project"

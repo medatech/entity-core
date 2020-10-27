@@ -1,6 +1,9 @@
-import { createEntity } from "../src/lib/"
-import { beforeEachTest, afterAllTests, dataSource } from "../src/fixtures"
-import { Entity } from "../src/interfaces"
+import { createEntity, Entity } from "@entity-core/pg"
+import {
+    beforeEachTest,
+    afterAllTests,
+    dataSource,
+} from "./fixtures"
 import { Context } from "@entity-core/context"
 
 interface User extends Entity {

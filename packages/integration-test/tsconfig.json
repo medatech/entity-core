@@ -13,15 +13,12 @@
         "moduleResolution": "node",
         "removeComments": true,
         "preserveConstEnums": true,
-        "outDir": "dist",
-        "sourceMap": true,
-        "declaration": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "noEmit": true
     },
     "include": [
-        "src/**/*",
         "test/**/*",
-        "node_modules/@types", "../integration-test/test/fixtures"
+        "node_modules/@types"
     ],
     "exclude": [
         "node_modules"
