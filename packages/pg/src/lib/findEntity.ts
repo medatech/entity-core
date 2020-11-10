@@ -1,6 +1,6 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
-import { Entity, EntityRecord } from "../interfaces"
+import { Entity, EntityRecord, EntityType } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 
@@ -11,7 +11,7 @@ async function findEntity<E extends Entity>({
 }: {
     context: Context
     props: Record<string, string | number | null | boolean>
-    type: string
+    type: EntityType
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
