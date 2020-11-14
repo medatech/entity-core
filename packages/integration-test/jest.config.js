@@ -1,6 +1,6 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    collectCoverageFrom: ["src/**/*.{ts,js}"],
+    collectCoverageFrom: ["../pg/**/*.{ts,js}"],
     transform: {}
 }; 

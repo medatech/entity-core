@@ -2,7 +2,6 @@
     "name": "@entity-core/integration-test",
     "version": "1.0.0",
     "description": "Integration tests for the entity-core",
-    "main": "./dist/index.js",
     "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
     "author": "Martin Adams",
     "license": "MIT",
