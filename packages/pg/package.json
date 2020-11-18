@@ -1,6 +1,6 @@
 {
     "name": "@entity-core/pg",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "A postgress database driver for entity-core",
     "main": "./dist/index.js",
     "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
@@ -45,8 +45,8 @@
         "typescript": "^3.9.7"
     },
     "dependencies": {
-        "@entity-core/context": "^0.0.0",
-        "@entity-core/datasource": "^0.0.0",
+        "@entity-core/context": "^0.0.1",
+        "@entity-core/datasource": "^0.0.1",
         "pg": "^8.3.0",
         "sql-template-strings": "^2.2.2"
     }
