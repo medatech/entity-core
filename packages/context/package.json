@@ -4,7 +4,7 @@
     "description": "A context class for handling entity-core database operations and request sessions",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "repository": "https://github.com/medatech/entity-core/tree/master/packages/context",
+    "repository": "https://github.com/medatech/entity-core/tree/main/packages/context",
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {

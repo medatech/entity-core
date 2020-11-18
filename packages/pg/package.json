@@ -3,7 +3,7 @@
     "version": "0.0.3",
     "description": "A postgress database driver for entity-core",
     "main": "./dist/index.js",
-    "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
+    "repository": "https://github.com/medatech/entity-core/tree/main/packages/pg",
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {

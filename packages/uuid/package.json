@@ -4,7 +4,7 @@
     "description": "Generate unique identifiers",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "repository": "https://github.com/medatech/entity-core/tree/master/packages/uuid",
+    "repository": "https://github.com/medatech/entity-core/tree/main/packages/uuid",
     "author": "Martin Adams",
     "license": "MIT",
     "scripts": {

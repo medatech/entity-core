@@ -4,7 +4,7 @@
   "description": "A data source interface for entity-core",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "repository": "https://github.com/medatech/entity-core/tree/master/packages/datasource",
+  "repository": "https://github.com/medatech/entity-core/tree/main/packages/datasource",
   "author": "Martin Adams",
   "license": "MIT",
   "scripts": {
