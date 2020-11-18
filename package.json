@@ -13,7 +13,7 @@
         "build:pg": "yarn workspace @entity-core/pg run build",
         "build": "npx lerna run build",
         "bootstrap": "npx lerna bootstrap",
-        "publish": "npx lerna publish"
+        "publish": "npx lerna publish --access public"
     },
     "workspaces": {
         "packages": [

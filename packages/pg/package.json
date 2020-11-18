@@ -49,5 +49,6 @@
         "@entity-core/datasource": "^0.0.2",
         "pg": "^8.3.0",
         "sql-template-strings": "^2.2.2"
-    }
+    },
+    "gitHead": "213999fbde49f1dac99cdce18c60372015a30fb6"
 }
