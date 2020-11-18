@@ -5,6 +5,7 @@
     "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
     "author": "Martin Adams",
     "license": "MIT",
+    "private": true,
     "scripts": {
         "test": "jest --runInBand test",
         "coverage": "jest --runInBand --coverage test",
