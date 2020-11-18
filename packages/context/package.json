@@ -13,6 +13,9 @@
         "lint:autofix": "eslint --fix ./src/**/*.ts",
         "prepublish": "yarn build"
     },
+    "files": [
+        "dist/"
+    ],
     "devDependencies": {
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",

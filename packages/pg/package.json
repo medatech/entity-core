@@ -15,6 +15,9 @@
         "lint:autofix": "eslint --fix ./src/**/*.ts",
         "prepublish": "yarn build"
     },
+    "files": [
+        "dist/"
+    ],
     "jest": {
         "transform": {
             ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
