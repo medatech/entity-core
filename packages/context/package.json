@@ -1,6 +1,6 @@
 {
     "name": "@entity-core/context",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A context class for handling entity-core database operations and request sessions",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -27,6 +27,6 @@
         "typescript": "^3.9.7"
     },
     "dependencies": {
-        "@entity-core/uuid": "^0.0.1"
+        "@entity-core/uuid": "^0.0.2"
     }
 }
