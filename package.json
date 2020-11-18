@@ -12,7 +12,8 @@
         "build:datasource": "yarn workspace @entity-core/datasource run build",
         "build:pg": "yarn workspace @entity-core/pg run build",
         "build": "npx lerna run build",
-        "bootstrap": "npx lerna bootstrap"
+        "bootstrap": "npx lerna bootstrap",
+        "publish": "npx lerna publish"
     },
     "workspaces": {
         "packages": [
