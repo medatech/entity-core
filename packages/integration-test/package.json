@@ -23,9 +23,9 @@
         ]
     },
     "devDependencies": {
-        "@entity-core/pg": "^1.0.0",
-        "@entity-core/datasource": "^1.0.0",
-        "@entity-core/context": "^1.0.0",
+        "@entity-core/pg": "^0.0.0",
+        "@entity-core/datasource": "^0.0.0",
+        "@entity-core/context": "^0.0.0",
         "sql-template-strings": "^2.2.2",
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",

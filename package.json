@@ -1,19 +1,18 @@
 {
     "name": "entity-core",
-    "version": "0.0.1",
     "description": "A backend framework to do the heavy lifting for frontend developers",
-    "main": "dist/index.js",
     "repository": "https://github.com/medatech/entity-core.git",
     "author": "hello@meda.io",
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build": "yarn build:uuid && yarn build:context && yarn build:datasource && yarn build:pg",
+        "xbuild": "yarn build:uuid && yarn build:context && yarn build:datasource && yarn build:pg",
         "build:uuid": "yarn workspace @entity-core/uuid run build",
         "build:context": "yarn workspace @entity-core/context run build",
         "build:datasource": "yarn workspace @entity-core/datasource run build",
         "build:pg": "yarn workspace @entity-core/pg run build",
-        "bootstrap": "npx lerna bootstrap",
+        "build": "npx lerna run build",
+        "bootstrap": "npx lerna bootstrap"
     },
     "workspaces": {
         "packages": [

@@ -42,8 +42,8 @@
         "typescript": "^3.9.7"
     },
     "dependencies": {
-        "@entity-core/context": "^1.0.0",
-        "@entity-core/datasource": "^1.0.0",
+        "@entity-core/context": "^0.0.0",
+        "@entity-core/datasource": "^0.0.0",
         "pg": "^8.3.0",
         "sql-template-strings": "^2.2.2"
     }
