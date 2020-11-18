@@ -1,6 +1,6 @@
 {
     "name": "@entity-core/pg",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "description": "A postgress database driver for entity-core",
     "main": "./dist/index.js",
     "repository": "https://github.com/medatech/entity-core/tree/master/packages/pg",
@@ -12,7 +12,8 @@
         "test:watch": "jest --watch src",
         "coverage": "jest --coverage src",
         "lint": "eslint ./src/**/*.ts",
-        "lint:autofix": "eslint --fix ./src/**/*.ts"
+        "lint:autofix": "eslint --fix ./src/**/*.ts",
+        "prepublish": "yarn build"
     },
     "jest": {
         "transform": {
