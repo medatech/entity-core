@@ -17,12 +17,14 @@ async function getSiblings({
     childEntityType,
     placement = null,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     childEntityID?: EntityID
     childEntityType: EntityType
     placement: EntityPlacement | null
     _lock: boolean
+    tenantID?: number
 }): Promise<EntitySiblings> {
     if (placement === null) {
         return {
@@ -51,6 +53,7 @@ async function getSiblings({
             parentType,
             childEntityType,
             _lock,
+            tenantID,
         })
 
         // If the last child was the entity we're placing, then return no sibling
@@ -64,6 +67,7 @@ async function getSiblings({
             context,
             id: placement.entityID,
             type: placement.entityType,
+            tenantID,
         })
 
         if (parent === null) {
@@ -83,17 +87,19 @@ async function getSiblings({
                 id: placement.entityID,
                 type: placement.entityType,
                 _lock,
+                tenantID,
             })
 
             nextSiblingID = placement.entityID
         } else if (placement.type === `after`) {
             // We're going after it, so we need to look up the next sibling ID from the current
-            // placement and use that. Then the placement becomes this entitie's before.
+            // placement and use that. Then the placement becomes this entity's before.
             nextSiblingID = await getNextSiblingID({
                 context,
                 id: placement.entityID,
                 type: placement.entityType,
                 _lock,
+                tenantID,
             })
 
             previousSiblingID = placement.entityID

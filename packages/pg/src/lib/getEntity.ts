@@ -9,17 +9,21 @@ async function getEntity<E extends Entity>({
     id,
     type,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     _lock?: boolean
+    tenantID?: number
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         SELECT * FROM "`.append(table).append(sql`"

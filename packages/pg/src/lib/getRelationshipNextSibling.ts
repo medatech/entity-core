@@ -17,6 +17,7 @@ async function getRelationshipPreviousSibling({
     entityID,
     entityType,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     relationship: EntityRelationship
@@ -25,12 +26,15 @@ async function getRelationshipPreviousSibling({
     entityID: EntityID
     entityType: EntityType
     _lock: boolean
+    tenantID?: number
 }): Promise<EntitySibling | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityRelTable = dataSource.tablePrefix + `relationship`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const optionalUpdate = _lock ? `FOR UPDATE` : ``
 

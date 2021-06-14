@@ -15,6 +15,7 @@ async function unrelateEntity({
     sourceEntityType,
     targetEntityID,
     targetEntityType,
+    tenantID = null,
 }: {
     context: Context
     relationship: EntityRelationship
@@ -22,12 +23,15 @@ async function unrelateEntity({
     sourceEntityType: EntityType
     targetEntityID: EntityID
     targetEntityType: EntityType
+    tenantID?: number
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityRelTable = dataSource.tablePrefix + `relationship`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     // We need to close the existing gap, so first let's get the current previous and next
     const oldPrevious = await getRelationshipPreviousSibling({
@@ -38,6 +42,7 @@ async function unrelateEntity({
         entityType: targetEntityType,
         entityID: targetEntityID,
         _lock: true,
+        tenantID,
     })
 
     const oldNext = await getRelationshipNextSibling({
@@ -48,6 +53,7 @@ async function unrelateEntity({
         entityID: targetEntityID,
         entityType: targetEntityType,
         _lock: true,
+        tenantID,
     })
 
     if (oldNext !== null) {

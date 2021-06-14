@@ -9,17 +9,21 @@ async function getParents({
     id,
     type,
     limit = 100,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     limit?: number
+    tenantID?: number
 }): Promise<EntityParent[]> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     // Create a recursive query which will take an entity, then return it's parent/type fields.
     // Do this recurisively and ignore the last node which wont have any parent/type fields set

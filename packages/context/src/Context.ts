@@ -1,19 +1,20 @@
 import { DataSource, Client } from "@entity-core/datasource"
 import { nanoid } from "@entity-core/uuid"
+import { TenantID } from "./types"
 
 class Context {
     dataSource: DataSource
     dbClient: Client
-    tenantID: number
+    tenantID: TenantID
     uuidGenerator: () => string
     constructor({
         dataSource,
-        tenantID = 1,
+        tenantID = `1`,
         uuidGenerator = nanoid,
     }: {
         dbClient?: Client
         dataSource: DataSource
-        tenantID?: number
+        tenantID?: TenantID
         uuidGenerator?: () => string
     }) {
         this.dbClient = null
@@ -22,15 +23,15 @@ class Context {
         this.uuidGenerator = uuidGenerator
     }
 
-    getTenantID(): number {
+    getTenantID() {
         return this.tenantID
     }
 
-    setTenantID(tenantID: number): void {
+    setTenantID(tenantID: string): void {
         this.tenantID = tenantID
     }
 
-    uuid(): string {
+    uuid() {
         return this.uuidGenerator()
     }
 

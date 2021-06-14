@@ -8,9 +8,9 @@
     "license": "MIT",
     "scripts": {
         "build": "tsc --build tsconfig.dist.json",
-        "test": "jest .",
-        "test:watch": "jest --watch src",
-        "coverage": "jest --coverage src",
+        "test": "jest --runInBand",
+        "test:watch": "jest --watch --runInBand src",
+        "coverage": "jest --runInBand --coverage src",
         "lint": "eslint ./src/**/*.ts",
         "lint:autofix": "eslint --fix ./src/**/*.ts",
         "prepublish": "yarn build"
@@ -36,7 +36,7 @@
         "@babel/core": "^7.11.1",
         "@babel/preset-env": "^7.11.0",
         "@babel/preset-typescript": "^7.10.4",
-        "@types/jest": "^26.0.15",
+        "@types/jest": "^26.0.23",
         "@types/node": "^14.6.0",
         "@types/pg": "^7.14.4",
         "@typescript-eslint/eslint-plugin": "^3.9.1",

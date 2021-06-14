@@ -1,4 +1,6 @@
-export type EntityID = number
+import { TenantID } from "@entity-core/context"
+
+export type EntityID = string
 export type EntityType = string
 export type EntityUuid = string
 export type EntityProps = Record<string, unknown> | null
@@ -13,6 +15,7 @@ export interface Entity {
 
 export interface EntityRecord {
     id: EntityID
+    tenant_id: TenantID
     entity_type: EntityType
     uuid: EntityUuid
     props: EntityProps

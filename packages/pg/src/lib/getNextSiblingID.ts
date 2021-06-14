@@ -9,16 +9,21 @@ async function getNextSiblingID({
     id,
     type,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     _lock: boolean
+    tenantID?: number
 }): Promise<EntityID> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
-    const tenantID = context.getTenantID()
+
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const optionalUpdate = _lock ? `FOR UPDATE` : ``
 

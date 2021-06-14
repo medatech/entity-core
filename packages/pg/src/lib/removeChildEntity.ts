@@ -15,21 +15,27 @@ async function removeChildEntity({
     context,
     id,
     type,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
+    tenantID?: number
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
-    const tenantID = context.getTenantID()
+
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const nextSiblingID = await getNextSiblingID({
         context,
         type: type,
         id: id,
         _lock: true,
+        tenantID,
     })
 
     const previousSiblingID = await getPreviousSiblingID({
@@ -37,6 +43,7 @@ async function removeChildEntity({
         type: type,
         id: id,
         _lock: true,
+        tenantID,
     })
 
     if (nextSiblingID !== null) {

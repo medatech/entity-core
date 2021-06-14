@@ -11,6 +11,7 @@ async function getChildren<E extends Entity>({
     childType = null,
     fromID = null,
     limit = 10,
+    tenantID = null,
 }: {
     context: Context
     parentID: EntityID
@@ -18,11 +19,15 @@ async function getChildren<E extends Entity>({
     childType: EntityType
     fromID?: EntityID | null
     limit?: number
+    tenantID?: number
 }): Promise<E[]> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
-    const tenantID = context.getTenantID()
+
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         WITH RECURSIVE ent AS (

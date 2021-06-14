@@ -10,16 +10,22 @@ async function getLastChildID({
     parentType,
     childEntityType,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     parentID: EntityID
     parentType: EntityType
     childEntityType: EntityType
     _lock: boolean
+    tenantID?: number
 }): Promise<EntityID | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
-    const tenantID = context.getTenantID()
+
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
+
     const table = dataSource.tablePrefix + `entity`
 
     const optionalUpdate = _lock ? `FOR UPDATE` : ``

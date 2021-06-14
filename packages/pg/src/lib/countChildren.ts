@@ -8,10 +8,12 @@ async function countChildren({
     context,
     parentID,
     childEntityType = null,
+    tenantID = null,
 }: {
     context: Context
     parentID: EntityID
     childEntityType: EntityType
+    tenantID?: number
 }): Promise<number> {
     if (childEntityType === null) {
         throw new Error(`Invalid child type of ${childEntityType}`)
@@ -20,7 +22,9 @@ async function countChildren({
     const dataSource = context.dataSource as PostgresDataSource
     const table = dataSource.tablePrefix + `entity`
     const client = (await context.getDB()) as PostgresClient
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         SELECT count(*) AS total

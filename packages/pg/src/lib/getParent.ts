@@ -8,16 +8,20 @@ async function getParent<E extends Entity>({
     context,
     id,
     type,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
+    tenantID?: number
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         SELECT p.*

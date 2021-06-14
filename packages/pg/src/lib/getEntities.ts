@@ -8,10 +8,12 @@ async function getEntities<E extends Entity>({
     context,
     entities,
     limit = null,
+    tenantID = null,
 }: {
     context: Context
     entities: { id: string; type: string }[]
     limit?: number | null
+    tenantID?: number
 }): Promise<E[]> {
     if (entities.length === 0) {
         return []
@@ -21,7 +23,9 @@ async function getEntities<E extends Entity>({
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         -- Select all the fields from the entity table

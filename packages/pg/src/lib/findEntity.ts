@@ -8,16 +8,20 @@ async function findEntity<E extends Entity>({
     context,
     props,
     type,
+    tenantID = null,
 }: {
     context: Context
     props: Record<string, string | number | null | boolean>
     type: EntityType
+    tenantID?: number
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     let query = sql`
         SELECT * FROM "`.append(table).append(sql`"

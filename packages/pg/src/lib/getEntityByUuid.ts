@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import { EntityUuid, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
@@ -9,17 +9,21 @@ async function getEntityByUuid<E extends Entity>({
     uuid,
     type,
     _lock = false,
+    tenantID = null,
 }: {
     context: Context
     uuid: EntityUuid
     type: EntityType
     _lock?: boolean
+    tenantID?: TenantID
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     const query = sql`
         SELECT * FROM "`.append(table).append(sql`"

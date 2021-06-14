@@ -1,6 +1,7 @@
 import sql from "sql-template-strings"
 import { Context } from "@entity-core/context"
 import { Entity, EntityRecord, EntityPlacement } from "../interfaces"
+import { TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import getSiblings from "./getSiblings"
@@ -9,16 +10,21 @@ async function createEntity<E extends Entity>({
     context,
     entity,
     placement = null,
+    tenantID = null,
 }: {
     context: Context
     entity: Entity
     placement?: EntityPlacement
+    tenantID?: TenantID
 }): Promise<E> {
     const dataSource = context.dataSource as PostgresDataSource
     const table = dataSource.tablePrefix + `entity`
     const client = (await context.getDB()) as PostgresClient
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
+
     const uuid = entity.uuid || context.uuid()
 
     // Work out the siblings based on the placement

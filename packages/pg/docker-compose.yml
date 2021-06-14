@@ -1,0 +1,19 @@
+version: "3.6"
+services:
+  entity-core-test-db:
+    build:
+      context: ./
+      dockerfile: ./db/Dockerfile
+    container_name: entity-core-test-db
+    networks:
+      - entity-core
+    ports:
+      - 18123:5432
+    environment:
+      - POSTGRES_USER=entity-core
+      - POSTGRES_PASSWORD=root
+      - DB_NAME=entity-core
+networks:
+  entity-core:
+    name: entity-core
+    driver: bridge

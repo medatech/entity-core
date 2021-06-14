@@ -14,18 +14,22 @@ async function _deleteEntity({
     id,
     type,
     isChild,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     isChild: boolean
+    tenantID?: number
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityTable = dataSource.tablePrefix + `entity`
     const entityRelTable = dataSource.tablePrefix + `relationship`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     // We need to remove all the children entities first
     // Start by getting all the possible child entity_types in case there are

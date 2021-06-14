@@ -21,14 +21,20 @@ async function detachChild({
     context,
     id,
     type,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
+    tenantID?: number
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
-    const tenantID = context.getTenantID()
+
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
+
     const table = dataSource.tablePrefix + `entity`
 
     // We need to close the existing gap, so first let's get the current previous and next
@@ -37,6 +43,7 @@ async function detachChild({
         type,
         id,
         _lock: true,
+        tenantID,
     })
 
     const oldNextID = await getNextSiblingID({
@@ -44,6 +51,7 @@ async function detachChild({
         type,
         id,
         _lock: true,
+        tenantID,
     })
 
     if (oldNextID !== null) {
@@ -76,17 +84,21 @@ async function attachChild({
     id,
     type,
     siblings,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     siblings: EntitySiblings
+    tenantID?: number
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    const tenantID = context.getTenantID()
+    if (tenantID === null) {
+        tenantID = context.getTenantID()
+    }
 
     // Update to the (possibly new -- but might be the same) parent and set the new previous ID
     await client.query(
@@ -120,11 +132,13 @@ async function placeEntity({
     id,
     type,
     placement,
+    tenantID = null,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     placement: EntityPlacement
+    tenantID?: number
 }): Promise<void> {
     if (id === placement.entityID) {
         throw new Error(
@@ -137,6 +151,7 @@ async function placeEntity({
         context,
         id: placement.entityID,
         type: placement.entityType,
+        tenantID,
     })
 
     if (parents.findIndex((parent) => parent.id === id) !== -1) {
@@ -150,12 +165,13 @@ async function placeEntity({
         childEntityType: type,
         placement,
         _lock: true,
+        tenantID,
     })
 
     // Detach the entity from any previous child relationships
-    await detachChild({ context, id, type })
+    await detachChild({ context, id, type, tenantID })
     // Now attach the child back again to the new siblings
-    await attachChild({ context, id, type, siblings })
+    await attachChild({ context, id, type, siblings, tenantID })
 }
 
 export default placeEntity
