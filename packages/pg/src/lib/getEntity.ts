@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
@@ -9,27 +9,33 @@ async function getEntity<E extends Entity>({
     id,
     type,
     _lock = false,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     _lock?: boolean
-    tenantID?: number
+    tenantID?: TenantID | null
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
     const query = sql`
-        SELECT * FROM "`.append(table).append(sql`"
-        WHERE tenant_id = ${tenantID}
-          AND entity_type = ${type}
+        SELECT * FROM "`
+        .append(table)
+        .append(
+            sql`"
+        WHERE entity_type = ${type}
           AND id = ${id}
+          `
+        )
+        .append(tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``)
+        .append(sql`
         LIMIT 1
     `)
 
@@ -48,6 +54,7 @@ async function getEntity<E extends Entity>({
         type: record.entity_type,
         uuid: record.uuid,
         props: record.props,
+        tenantID: record.tenant_id,
     } as E
 
     return outputEntity

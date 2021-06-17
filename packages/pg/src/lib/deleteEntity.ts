@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import { Entity, EntityID, EntityType } from "../interfaces"
@@ -14,20 +14,20 @@ async function _deleteEntity({
     id,
     type,
     isChild,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     isChild: boolean
-    tenantID?: number
+    tenantID?: TenantID
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityTable = dataSource.tablePrefix + `entity`
     const entityRelTable = dataSource.tablePrefix + `relationship`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -36,11 +36,17 @@ async function _deleteEntity({
     // multiple children types
     const { rows: childRows } = await client.query<{ entity_type: string }>(
         sql`
-        SELECT DISTINCT entity_type FROM "`.append(entityTable).append(sql`"
-         WHERE tenant_id = ${tenantID}
-           AND parent = ${id}
+        SELECT DISTINCT entity_type FROM "`
+            .append(entityTable)
+            .append(
+                sql`"
+         WHERE parent = ${id}
            AND parent_type = ${type}
-    `)
+           `
+            )
+            .append(
+                tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``
+            )
     )
 
     for (let i = 0; i < childRows.length; i += 1) {
@@ -57,6 +63,7 @@ async function _deleteEntity({
                 childType,
                 fromID,
                 limit: 100,
+                tenantID,
             })
 
             if (children.length > 0) {
@@ -67,6 +74,7 @@ async function _deleteEntity({
                         id: children[j].id,
                         type: childType,
                         isChild: true,
+                        tenantID,
                     })
                 }
 
@@ -86,11 +94,17 @@ async function _deleteEntity({
             name,
             from_id,
             from_type
-        FROM "`.append(entityRelTable).append(sql`"
+        FROM "`
+            .append(entityRelTable)
+            .append(
+                sql`"
         WHERE to_id = ${id}
           AND to_type = ${type}
-          AND tenant_id = ${tenantID}
-    `)
+          `
+            )
+            .append(
+                tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``
+            )
     )
 
     for (let i = 0; i < inboundRows.length; i += 1) {
@@ -102,6 +116,7 @@ async function _deleteEntity({
             sourceEntityType: record.from_type,
             targetEntityID: id,
             targetEntityType: type,
+            tenantID,
         })
     }
 
@@ -111,6 +126,7 @@ async function _deleteEntity({
             context,
             type,
             id,
+            tenantID,
         })
 
         if (parent !== null) {
@@ -118,6 +134,7 @@ async function _deleteEntity({
                 context,
                 id: id,
                 type: type,
+                tenantID,
             })
         }
     }
@@ -125,11 +142,17 @@ async function _deleteEntity({
     // Now remove the entity
     await client.query(
         sql`
-        DELETE FROM "`.append(entityTable).append(sql`"
-         WHERE tenant_id = ${tenantID}
-           AND entity_type = ${type}
+        DELETE FROM "`
+            .append(entityTable)
+            .append(
+                sql`"
+         WHERE entity_type = ${type}
            AND id = ${id}
-    `)
+           `
+            )
+            .append(
+                tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``
+            )
     )
 }
 
@@ -137,12 +160,14 @@ function deleteEntity({
     context,
     id,
     type,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
+    tenantID?: TenantID
 }): Promise<void> {
-    return _deleteEntity({ context, id, type, isChild: false })
+    return _deleteEntity({ context, id, type, isChild: false, tenantID })
 }
 
 export default deleteEntity

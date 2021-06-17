@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import getPreviousSiblingID from "./getPreviousSiblingID"
@@ -14,24 +14,24 @@ import {
 } from "../interfaces"
 
 /**
- * This funtion helps us remove an existing child out of the chain by making it's immediately before/after neighbours become
- * direct neibhbours of themselves.
+ * This function helps us remove an existing child out of the chain by making it's immediately before/after neighbours become
+ * direct neighbors of themselves.
  */
 async function detachChild({
     context,
     id,
     type,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
-    tenantID?: number
+    tenantID?: TenantID
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -90,7 +90,7 @@ async function attachChild({
     id: EntityID
     type: EntityType
     siblings: EntitySiblings
-    tenantID?: number
+    tenantID?: TenantID
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
@@ -138,7 +138,7 @@ async function placeEntity({
     id: EntityID
     type: EntityType
     placement: EntityPlacement
-    tenantID?: number
+    tenantID?: TenantID
 }): Promise<void> {
     if (id === placement.entityID) {
         throw new Error(

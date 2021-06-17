@@ -1,48 +1,90 @@
-import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import sql, { SQLStatement } from "sql-template-strings"
+import { Context, TenantID } from "@entity-core/context"
 import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
+
+type FilterProps = Record<string, string | number | null | boolean>
+
+function createFilterStatement(
+    isFirstCondition = true,
+    filter: FilterProps,
+    fieldPrefix = ``
+) {
+    let query: SQLStatement | null = null
+    // Now append the entity props to filter on
+    Object.keys(filter).forEach((field, index) => {
+        if (query === null) {
+            query = isFirstCondition ? sql`` : sql` AND `
+        }
+
+        const value = filter[field]
+        if (index !== 0 || isFirstCondition === false) {
+            query.append(` AND `)
+        }
+        if (value === null) {
+            query = query
+                .append(fieldPrefix)
+                .append(`props->>'${field}' is null `)
+        } else {
+            query = query
+                .append(fieldPrefix)
+                .append(`props->>'${field}' = `)
+                .append(sql`${value} `)
+        }
+    })
+
+    return query
+}
 
 async function getChildren<E extends Entity>({
     context,
     parentID,
     parentType = null,
     childType = null,
+    filter = {},
     fromID = null,
     limit = 10,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     parentID: EntityID
     parentType: EntityType
     childType: EntityType
+    filter?: FilterProps
     fromID?: EntityID | null
     limit?: number
-    tenantID?: number
+    tenantID?: TenantID | null
 }): Promise<E[]> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
+
+    const filterStatement = createFilterStatement(true, filter, ``)
 
     const query = sql`
         WITH RECURSIVE ent AS (
             -- Get our first element
             SELECT *, 1 as index
-            FROM "`.append(table).append(sql`"
-            WHERE tenant_id = ${tenantID}
-                AND entity_type = ${childType}
+            FROM "`
+        .append(table)
+        .append(
+            sql`"
+            WHERE entity_type = ${childType}
                 AND parent = ${parentID}
                 AND parent_type = ${parentType}
-            `)
+                `
+        )
+        .append(tenantID !== null ? sql`AND tenant_id = ${tenantID} ` : sql``)
+
     if (fromID === null) {
-        query.append(sql`AND previous IS NULL`)
+        query.append(sql`AND previous IS NULL `)
     } else {
-        query.append(sql`AND previous = ${fromID}`)
+        query.append(sql`AND previous = ${fromID} `)
     }
     query.append(
         sql`
@@ -50,17 +92,34 @@ async function getChildren<E extends Entity>({
             SELECT
                 e.*, ent.index + 1 as index
             FROM
-                "`.append(table).append(sql`" e
+                "`
+            .append(table)
+            .append(
+                sql`" e
             INNER JOIN ent ON (
-                    ent.tenant_id = e.tenant_id
-                AND ent.entity_type = e.entity_type
+                    ent.entity_type = e.entity_type
                 AND ent.id = e.previous
                 AND ent.parent = e.parent
                 AND ent.parent_type = e.parent_type
                 AND ent.index < ${limit}
+                `
+            )
+            .append(
+                tenantID !== null
+                    ? sql`AND ent.tenant_id = e.tenant_id `
+                    : sql``
+            )
+            .append(
+                sql`
             )
     )
-    SELECT * FROM ent 
+    SELECT * FROM ent`
+            )
+            .append(
+                filterStatement === null
+                    ? ``
+                    : sql` WHERE `.append(filterStatement)
+            ).append(`
     ORDER BY ent.index
     LIMIT ${limit}
     `)
@@ -73,6 +132,7 @@ async function getChildren<E extends Entity>({
         type: row.entity_type,
         uuid: row.uuid,
         props: row.props,
+        tenantID: row.tenant_id,
     })) as E[]
 }
 

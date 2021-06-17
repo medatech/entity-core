@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import { EntityID, EntityType } from "../interfaces"
@@ -10,19 +10,19 @@ async function getLastChildID({
     parentType,
     childEntityType,
     _lock = false,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     parentID: EntityID
     parentType: EntityType
     childEntityType: EntityType
     _lock: boolean
-    tenantID?: number
+    tenantID: TenantID | null
 }): Promise<EntityID | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -36,10 +36,17 @@ async function getLastChildID({
             .append(table)
             .append(
                 sql`" e
-                    WHERE e.tenant_id = ${tenantID}
-                    AND e. entity_type = ${childEntityType}
+                    WHERE 
+                        e. entity_type = ${childEntityType}
                     AND e. parent = ${parentID}
                     AND e. parent_type = ${parentType}
+                    `
+            )
+            .append(
+                tenantID !== null ? sql`AND e.tenant_id = ${tenantID}` : sql``
+            )
+            .append(
+                sql`
                     -- AND there is no next row referencing this (so it's the last)
                     AND NOT EXISTS (
                         SELECT
@@ -47,16 +54,22 @@ async function getLastChildID({
                     .append(table)
                     .append(
                         sql`" n
-                        WHERE n.tenant_id = ${tenantID}
-                        AND n.entity_type = ${childEntityType}
+                        WHERE 
+                            n.entity_type = ${childEntityType}
                         AND n.parent = ${parentID}
                         AND n.parent_type = ${parentType}
                         AND n.previous = e.id
+                        `
+                    )
+                    .append(
+                        tenantID !== null
+                            ? sql`AND n.tenant_id = ${tenantID}`
+                            : sql``
+                    ).append(sql`
                         LIMIT 1
                       )
                     LIMIT 1
-                `
-                    )
+                `)
             )
             .append(optionalUpdate)
     )

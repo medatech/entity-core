@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import { EntityID, EntityType, EntityParent } from "../interfaces"
@@ -8,17 +8,17 @@ async function getEntityParent({
     context,
     id,
     type,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
-    tenantID?: number
+    tenantID?: TenantID | null
 }): Promise<EntityParent | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -34,12 +34,16 @@ async function getEntityParent({
             .append(table)
             .append(
                 sql`"
-            WHERE tenant_id = ${tenantID}
-            AND entity_type = ${type}
+            WHERE 
+                entity_type = ${type}
             AND id = ${id}
-            LIMIT 1
-        `
+            `
             )
+            .append(
+                tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``
+            ).append(sql`
+            LIMIT 1
+        `)
     )
 
     if (rows.length > 0) {

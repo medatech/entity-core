@@ -19,8 +19,8 @@ interface Document extends Entity {
     }
 }
 
-interface System extends Entity {
-    type: "System"
+interface Thing extends Entity {
+    type: "Thing"
     props: null
 }
 
@@ -31,8 +31,8 @@ describe(`createEntity`, () => {
 
     it(`should allow me to get an entity by it's uuid`, async () => {
         // First create the document
-        await createEntity<Document>({
-            context,
+        const doc = await createEntity<Document>({
+            context: context.current,
             entity: {
                 type: `Document`,
                 uuid: `test-uuid`,
@@ -44,14 +44,14 @@ describe(`createEntity`, () => {
         })
 
         // Get the entity by uuid
-        const doc = await getEntityByUuid<Document>({
-            context,
+        const verifyDoc = await getEntityByUuid<Document>({
+            context: context.current,
             uuid: `test-uuid`,
             type: `Document`,
         })
 
-        expect(doc).toMatchObject({
-            id: `1`,
+        expect(verifyDoc).toMatchObject({
+            id: doc.id,
             type: `Document`,
             uuid: `test-uuid`,
             props: {
@@ -61,29 +61,29 @@ describe(`createEntity`, () => {
         })
     })
 
-    it(`should allow me to get a system entity from a specific tenant`, async () => {
-        await createEntity<Document>({
-            context,
+    it(`should allow me to get an entity from a specific tenant`, async () => {
+        const thing = await createEntity<Thing>({
+            context: context.current,
             entity: {
-                type: `System`,
-                uuid: `system`,
+                type: `Thing`,
+                uuid: `thing`,
                 props: null,
             },
             tenantID: `500`,
         })
 
         // Get the entity by uuid
-        const system = await getEntityByUuid<Document>({
-            context,
-            uuid: `system`,
-            type: `System`,
+        const verifyThing = await getEntityByUuid<Thing>({
+            context: context.current,
+            uuid: `thing`,
+            type: `Thing`,
             tenantID: `500`,
         })
 
-        expect(system).toEqual({
-            id: `1`,
-            type: `System`,
-            uuid: `system`,
+        expect(verifyThing).toEqual({
+            id: thing.id,
+            type: `Thing`,
+            uuid: `thing`,
             props: null,
         })
     })

@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 import { EntityID, EntityType } from "../interfaces"
@@ -9,19 +9,19 @@ async function getPreviousSiblingID({
     id,
     type,
     _lock = false,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     id: EntityID
     type: EntityType
     _lock: boolean
-    tenantID?: number
+    tenantID?: TenantID | null
 }): Promise<EntityID | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -34,9 +34,15 @@ async function getPreviousSiblingID({
             .append(table)
             .append(
                 sql`"
-         WHERE tenant_id = ${tenantID}
-           AND entity_type = ${type}
+         WHERE entity_type = ${type}
            AND id = ${id}
+           `
+            )
+            .append(
+                tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``
+            )
+            .append(
+                sql`
          LIMIT 1
          `
             )

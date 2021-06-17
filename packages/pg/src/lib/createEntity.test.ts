@@ -21,12 +21,6 @@ interface Document extends Entity {
         shared: boolean
     }
 }
-
-interface System extends Entity {
-    type: "System"
-    props: null
-}
-
 interface Page extends Entity {
     type: "Page"
     props: {
@@ -54,38 +48,42 @@ describe(`createEntity`, () => {
 
         // Now create the entity
         const doc = await createEntity<Document>({
-            context,
+            context: context.current,
             entity: entitySpec,
         })
 
         expect(doc).toMatchObject({
-            id: `1`,
+            id: doc.id,
             type: entitySpec.type,
             uuid: `uuid:1`,
             props: entitySpec.props,
         })
     })
 
-    it(`should allow me to create a system entity`, async () => {
-        const entitySpec: System = {
-            type: `System`,
-            uuid: `system`,
-            props: null,
+    it(`should allow me to create an entity in a specific tenant`, async () => {
+        const entitySpec: Document = {
+            type: `Document`,
+            uuid: `globalDocument`,
+            props: {
+                title: `My Document`,
+                shared: true,
+            },
         }
 
-        const system = await createEntity<System>({
-            context,
+        const system = await createEntity<Document>({
+            context: context.current,
             entity: entitySpec,
             tenantID: `500`,
         })
 
-        expect(system.uuid).toBe(`system`)
+        expect(system.uuid).toBe(`globalDocument`)
 
         // Verify the tenant ID was 500
         const client = await getClient()
         const result = await client.query<EntityRecord>(
-            sql`select * from ec_entity`
+            sql`select * from ec_entity where uuid = 'globalDocument'`
         )
+
         expect(result.rows[0].tenant_id).toBe(`500`)
     })
 })

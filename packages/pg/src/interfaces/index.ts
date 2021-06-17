@@ -11,6 +11,7 @@ export interface Entity {
     uuid?: EntityUuid
     type: EntityType
     props: EntityProps
+    tenantID?: TenantID
 }
 
 export interface EntityRecord {

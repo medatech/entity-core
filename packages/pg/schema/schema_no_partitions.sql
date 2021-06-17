@@ -54,3 +54,9 @@ CREATE TABLE ec_relationship (
 CREATE UNIQUE INDEX ec_idx_relationship ON ec_relationship (tenant_id, name, from_id, from_type, to_id, to_type);
 -- relationship
 CREATE INDEX ec_idx_relationship_previous ON ec_relationship (tenant_id, name, from_id, from_type, to_id, to_type, previous);
+
+-- Create the default system entity which other entites can be a child of
+INSERT INTO "ec_entity"
+  (tenant_id, entity_type, uuid, props, parent, parent_type, previous)
+  VALUES
+  (1, 'System', 'system', null, null, null, null);

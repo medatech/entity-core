@@ -1,4 +1,4 @@
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import getPreviousSiblingID from "./getPreviousSiblingID"
 import getNextSiblingID from "./getNextSiblingID"
 import getLastChildID from "./getLastChildID"
@@ -17,14 +17,14 @@ async function getSiblings({
     childEntityType,
     placement = null,
     _lock = false,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     childEntityID?: EntityID
     childEntityType: EntityType
     placement: EntityPlacement | null
     _lock: boolean
-    tenantID?: number
+    tenantID?: TenantID | null
 }): Promise<EntitySiblings> {
     if (placement === null) {
         return {

@@ -9,27 +9,34 @@ async function getEntityByUuid<E extends Entity>({
     uuid,
     type,
     _lock = false,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     uuid: EntityUuid
     type: EntityType
     _lock?: boolean
-    tenantID?: TenantID
+    tenantID?: TenantID | null
 }): Promise<E | null> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const table = dataSource.tablePrefix + `entity`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
     const query = sql`
-        SELECT * FROM "`.append(table).append(sql`"
-        WHERE tenant_id = ${tenantID}
-          AND entity_type = ${type}
+        SELECT * FROM "`
+        .append(table)
+        .append(
+            sql`"
+        WHERE 
+               entity_type = ${type}
           AND uuid = ${uuid}
+          `
+        )
+        .append(tenantID !== null ? sql`AND tenant_id = ${tenantID}` : sql``)
+        .append(sql`
         LIMIT 1
     `)
 
@@ -48,6 +55,7 @@ async function getEntityByUuid<E extends Entity>({
         type: record.entity_type,
         uuid: record.uuid,
         props: record.props,
+        tenantID: record.tenant_id,
     } as E
 
     return outputEntity

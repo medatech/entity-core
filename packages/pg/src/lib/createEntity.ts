@@ -10,7 +10,7 @@ async function createEntity<E extends Entity>({
     context,
     entity,
     placement = null,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     entity: Entity
@@ -21,7 +21,7 @@ async function createEntity<E extends Entity>({
     const table = dataSource.tablePrefix + `entity`
     const client = (await context.getDB()) as PostgresClient
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 
@@ -71,6 +71,7 @@ async function createEntity<E extends Entity>({
         type: record.entity_type,
         uuid: record.uuid,
         props: record.props,
+        tenantID: record.tenant_id,
     } as E
 
     return outputEntity

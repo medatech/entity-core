@@ -1,5 +1,5 @@
 import sql from "sql-template-strings"
-import { Context } from "@entity-core/context"
+import { Context, TenantID } from "@entity-core/context"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
 
@@ -15,7 +15,7 @@ async function unrelateEntity({
     sourceEntityType,
     targetEntityID,
     targetEntityType,
-    tenantID = null,
+    tenantID,
 }: {
     context: Context
     relationship: EntityRelationship
@@ -23,13 +23,13 @@ async function unrelateEntity({
     sourceEntityType: EntityType
     targetEntityID: EntityID
     targetEntityType: EntityType
-    tenantID?: number
+    tenantID?: TenantID
 }): Promise<void> {
     const dataSource = context.dataSource as PostgresDataSource
     const client = (await context.getDB()) as PostgresClient
     const entityRelTable = dataSource.tablePrefix + `relationship`
 
-    if (tenantID === null) {
+    if (tenantID === undefined) {
         tenantID = context.getTenantID()
     }
 

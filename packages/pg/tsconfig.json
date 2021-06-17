@@ -24,6 +24,7 @@
         "node_modules/@types", "../integration-test/test/fixtures"
     ],
     "exclude": [
+        "src/**/*.test.ts",
         "node_modules"
     ]
 }

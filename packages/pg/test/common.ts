@@ -14,12 +14,14 @@ const dataSource = new PostgresDataSource({
     tablePrefix: `ec_`,
 })
 
-const context = new Context({
-    dataSource,
-})
+const context = {
+    current: new Context({
+        dataSource,
+    }),
+}
 
 async function getClient() {
-    const client = (await context.getDB()) as PostgresClient
+    const client = (await context.current.getDB()) as PostgresClient
     return client
 }
 
@@ -29,14 +31,26 @@ async function _beforeAll() {
 
 async function _afterAll() {
     await dataSource.disconnect()
+    context.current.end()
 }
 
 async function _beforeEach() {
+    await context.current.end() // Stop the previous context
+    context.current = new Context({ dataSource })
     __resetNanoid()
     const client = await dataSource.getClient()
     await client.query(
-        `truncate ec_entity, ec_relationship, ec_tenant RESTART IDENTITY`
+        `TRUNCATE ec_entity, ec_relationship, ec_tenant RESTART IDENTITY`
     )
+    await client.query(`ALTER SEQUENCE ec_tenant_id_seq RESTART WITH 1000;`)
+
+    // Add the system entity back
+    await client.query(`
+        INSERT INTO "ec_entity"
+        (tenant_id, entity_type, uuid, props, parent, parent_type, previous)
+        VALUES
+        (1, 'System', 'system', null, null, null, null);
+    `)
 }
 
 export { context, dataSource, getClient, _beforeAll, _afterAll, _beforeEach }
