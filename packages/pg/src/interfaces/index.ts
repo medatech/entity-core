@@ -47,3 +47,5 @@ export interface EntitySiblings {
     previousSiblingID: EntityID | null
     nextSiblingID: EntityID | null
 }
+
+export type FilterProps = Record<string, string | number | null | boolean>

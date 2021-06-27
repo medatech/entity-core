@@ -1,10 +1,14 @@
 import sql, { SQLStatement } from "sql-template-strings"
 import { Context, TenantID } from "@entity-core/context"
-import { EntityID, EntityType, Entity, EntityRecord } from "../interfaces"
+import {
+    EntityID,
+    EntityType,
+    Entity,
+    EntityRecord,
+    FilterProps,
+} from "../interfaces"
 import PostgresDataSource from "../PostgresDataSource"
 import PostgresClient from "../PostgresClient"
-
-type FilterProps = Record<string, string | number | null | boolean>
 
 function createFilterStatement(
     isFirstCondition = true,
