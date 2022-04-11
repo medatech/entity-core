@@ -35,8 +35,6 @@ async function createEntity<E extends Entity>({
         _lock: true,
     })
 
-    console.log(`siblings`, siblings)
-
     const query = sql`
         INSERT INTO "`.append(table).append(sql`"
         (tenant_id, entity_type, uuid, props, parent, parent_type, previous)
