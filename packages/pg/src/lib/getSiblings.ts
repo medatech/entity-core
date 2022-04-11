@@ -1,6 +1,7 @@
 import { Context, TenantID } from "@entity-core/context"
 import getPreviousSiblingID from "./getPreviousSiblingID"
 import getNextSiblingID from "./getNextSiblingID"
+import getFirstChildID from "./getFirstChildID"
 import getLastChildID from "./getLastChildID"
 import getEntityParent from "./getEntityParent"
 
@@ -41,8 +42,8 @@ async function getSiblings({
     let previousSiblingID: EntityID | null = null
     let nextSiblingID: EntityID | null = null
 
-    // If the placement is a child plament, then we want to put it at the end of the children list
-    if (placement.type === `child`) {
+    // If the placement is a child placement, then we want to put it at the end of the children list
+    if (placement.type === `lastChild`) {
         parentID = placement.entityID
         parentType = placement.entityType
 
@@ -57,8 +58,27 @@ async function getSiblings({
         })
 
         // If the last child was the entity we're placing, then return no sibling
+        // This is to allow it to be moved from another part of the chain where it
+        // doesn't end up in the same place
         if (previousSiblingID === childEntityID) {
             previousSiblingID = null
+        }
+    } else if (placement.type === `firstChild`) {
+        parentID = placement.entityID
+        parentType = placement.entityType
+
+        // Find the existing first entity in the list and now make it the next sibling ID
+        nextSiblingID = await getFirstChildID({
+            context,
+            parentID,
+            parentType,
+            childEntityType,
+            _lock,
+            tenantID,
+        })
+
+        if (nextSiblingID === childEntityID) {
+            nextSiblingID = null
         }
     } else {
         // We're placing this before or after another, but we still need the parent details

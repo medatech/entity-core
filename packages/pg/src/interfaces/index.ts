@@ -26,7 +26,7 @@ export interface EntityRecord {
 }
 
 export interface EntityPlacement {
-    type: "child" | "before" | "after"
+    type: "firstChild" | "lastChild" | "before" | "after"
     entityID: EntityID
     entityType: EntityType
 }
